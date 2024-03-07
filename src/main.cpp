@@ -37,32 +37,32 @@ response getParsedCommand(char *str) {
 	response result;
 	std::string stringCommand = std::string(str);
 	std::string type = stringCommand.substr(0, stringCommand.find(" "));
-	result.command = stringCommand.substr(stringCommand.find(" "), stringCommand.length());
-	if (type == "PING") {
+	result.command = stringCommand.substr(stringCommand.find(" ") + 1, stringCommand.length());
+	if (type == "PING")
 		result.type = PING;
-	} else if (type == "PONG") {
+	else if (type == "PONG")
 		result.type = PONG;
-	} else if (type == "USER") {
+	else if (type == "USER")
 		result.type = USER;
-	}  else if (type == "NICK") {
+	 else if (type == "NICK")
 		result.type = NICK;
-	}  else if (type == "JOIN") {
+	 else if (type == "JOIN")
 		result.type = JOIN;
-	}  else if (type == "PART") {
+	 else if (type == "PART")
 		result.type = PART;
-	}  else if (type == "PRIVMSG") {
+	 else if (type == "PRIVMSG")
 		result.type = PRIVMSG;
-	}  else if (type == "QUIT") {
+	 else if (type == "QUIT")
 		result.type = QUIT;
-	}  else if (type == "MODE") {
+	 else if (type == "MODE")
 		result.type = MODE;
-	}  else if (type == "WHOIS") {
+	 else if (type == "WHOIS")
 		result.type = WHOIS;
-	}  else if (type == "TOPIC") {
+	 else if (type == "TOPIC")
 		result.type = TOPIC;
-	}  else if (type == "NOTICE") {
+	 else if (type == "NOTICE")
 		result.type = NOTICE;
-	}
+	return result;
 }
 
 int main() {
@@ -116,8 +116,10 @@ int main() {
 		ssize_t bytesRead;
 		while ((bytesRead = recv(clientSocket, buffer, BUFFER_SIZE, 0)) > 0) {
 			buffer[bytesRead] = '\0'; // Null terminate the received data
-			std::cout << "Received: " << buffer << std::endl;
-			std::cout << "Something" << std::endl;
+			response res = getParsedCommand(buffer);
+			std::cout << res.type << std::endl;
+			std::cout << res.command << std::endl;
+			// std::cout << "Received: " << buffer << std::endl;
 			// Process IRC commands here
 		}
 		if (bytesRead == 0) {
