@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <poll.h>
 
 #define PORT 6667
 #define MAX_CLIENTS 10
@@ -28,45 +29,26 @@ enum Type {
     NOTICE
 };
 
-struct response {
+struct Response {
     Type type;
     std::string command;
 };
 
-response getParsedCommand(char *str) {
-	response result;
+Response getParsedCommand(char *str) {
+	Response result;
 	std::string stringCommand = std::string(str);
+	std::string types[] = {"PING", "PONG", "USER", "NICK", "JOIN", "PART", "PRIVMSG", "QUIT", "MODE", "WHOIS", "TOPIC", "NOTICE"};
 	std::string type = stringCommand.substr(0, stringCommand.find(" "));
 	result.command = stringCommand.substr(stringCommand.find(" ") + 1, stringCommand.length());
-	if (type == "PING")
-		result.type = PING;
-	else if (type == "PONG")
-		result.type = PONG;
-	else if (type == "USER")
-		result.type = USER;
-	 else if (type == "NICK")
-		result.type = NICK;
-	 else if (type == "JOIN")
-		result.type = JOIN;
-	 else if (type == "PART")
-		result.type = PART;
-	 else if (type == "PRIVMSG")
-		result.type = PRIVMSG;
-	 else if (type == "QUIT")
-		result.type = QUIT;
-	 else if (type == "MODE")
-		result.type = MODE;
-	 else if (type == "WHOIS")
-		result.type = WHOIS;
-	 else if (type == "TOPIC")
-		result.type = TOPIC;
-	 else if (type == "NOTICE")
-		result.type = NOTICE;
+	for (int i(0); i < 12; i++) {
+		if (type == types[i])
+			result.type = static_cast<Type>(i);
+	}
 	return result;
 }
 
 int main() {
-	int serverSocket, clientSocket;
+	int serverSocket, clientSockets[MAX_CLIENTS];
 	struct sockaddr_in serverAddr, clientAddr;
 	socklen_t clientAddrSize = sizeof(clientAddr);
 	char buffer[BUFFER_SIZE];
@@ -102,36 +84,62 @@ int main() {
 	}
 
 	// Accept connections
-	while (1) {
-		clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
-		if (clientSocket < 0) {
-			perror("Error in accept");
-			exit(EXIT_FAILURE);
-		}
+struct pollfd fds[MAX_CLIENTS + 1];
+    fds[0].fd = serverSocket;
+    fds[0].events = POLLIN;
+    int numClients = 1;
 
-		char welcomeMessage[] = ":irc.server.com 001 user :Welcome to the Internet Relay Network user!user@hostname\n";
-        send(clientSocket, welcomeMessage, strlen(welcomeMessage), 0);
+    // Accept connections and handle data
+    while (true) {
+        // Use poll to monitor events
+        if (poll(fds, numClients, -1) == -1) {
+            perror("Error in poll");
+            exit(EXIT_FAILURE);
+        }
 
-		// Receive data from client
-		ssize_t bytesRead;
-		while ((bytesRead = recv(clientSocket, buffer, BUFFER_SIZE, 0)) > 0) {
-			buffer[bytesRead] = '\0'; // Null terminate the received data
-			response res = getParsedCommand(buffer);
-			std::cout << res.type << std::endl;
-			std::cout << res.command << std::endl;
-			// std::cout << "Received: " << buffer << std::endl;
-			// Process IRC commands here
-		}
-		if (bytesRead == 0) {
-			std::cout << "Client disconnected" << std::endl;
-		} else if (bytesRead < 0) {
-			perror("Error in recv");
-			exit(EXIT_FAILURE);
-		}
+        // Check events for each file descriptor
+        for (int i = 0; i < numClients; ++i) {
+            if (fds[i].revents & POLLIN) {
+                if (i == 0) {
+                    // New incoming connection
+                    clientSockets[numClients - 1] = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+                    if (clientSockets[numClients - 1] < 0) {
+                        perror("Error in accept");
+                    } else {
+                        std::cout << "New connection accepted" << std::endl;
+                        fds[numClients].fd = clientSockets[numClients - 1];
+                        fds[numClients].events = POLLIN;
+                        ++numClients;
 
-		// Close client socket
-		close(clientSocket);
-	}
+						char welcomeMessage[] = ":irc.server.com 001 user :Welcome to the Internet Relay Network user!user@hostname\n";
+        				send(clientSockets[numClients - 2], welcomeMessage, strlen(welcomeMessage), 0);
+                    }
+                } else {
+                    // Data received from a client
+                    ssize_t bytesRead = recv(fds[i].fd, buffer, BUFFER_SIZE, 0);
+                    if (bytesRead > 0) {
+                        buffer[bytesRead] = '\0';
+                        Response res = getParsedCommand(buffer);
+                        std::cout << "Type: " << res.type << std::endl;
+                        std::cout << "Command: " << res.command << std::endl;
+                        // Process IRC commands here
+                    } else if (bytesRead == 0) {
+                        std::cout << "Client disconnected" << std::endl;
+                        // Remove the disconnected client from the poll set
+                        close(fds[i].fd);
+                        for (int j = i; j < numClients - 1; ++j) {
+                            fds[j] = fds[j + 1];
+                        }
+                        --numClients;
+                    } else {
+                        perror("Error in recv");
+                        exit(EXIT_FAILURE);
+                    }
+                }
+            }
+        }
+    }
+
 
 	// Close server socket
 	close(serverSocket);
