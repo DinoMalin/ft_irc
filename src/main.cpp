@@ -9,6 +9,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <poll.h>
+#include <algorithm>
+#include <sstream>
+#include <vector>
 
 #define PORT 6667
 #define MAX_CLIENTS 10
@@ -30,20 +33,33 @@ enum Type {
 };
 
 struct Response {
-    Type type;
+    std::string prefix;
     std::string command;
+    std::vector<std::string> commandParameters;
 };
 
-Response getParsedCommand(char *str) {
+// "PRIVMSG #a :test"
+
+Response getParsedCommand(std::string str) {
 	Response result;
-	std::string stringCommand = std::string(str);
-	std::string types[] = {"PING", "PONG", "USER", "NICK", "JOIN", "PART", "PRIVMSG", "QUIT", "MODE", "WHOIS", "TOPIC", "NOTICE"};
-	std::string type = stringCommand.substr(0, stringCommand.find(" "));
-	result.command = stringCommand.substr(stringCommand.find(" ") + 1, stringCommand.length());
-	for (int i(0); i < 12; i++) {
-		if (type == types[i])
-			result.type = static_cast<Type>(i);
-	}
+    std::stringstream ss(str);
+    std::string currentParam;
+
+    ss >> result.command;
+    if (result.command == "PRIVMSG") {
+        ss >> currentParam;
+        result.commandParameters.push_back(currentParam);
+
+        std::string msg;
+        std::getline(ss, msg);
+        result.commandParameters.push_back(msg);
+        result.commandParameters[1].erase(0, 2);
+    } else {
+        while (ss >> currentParam) {
+            result.commandParameters.push_back(currentParam);
+        }
+    }
+
 	return result;
 }
 
@@ -118,11 +134,15 @@ struct pollfd fds[MAX_CLIENTS + 1];
                     // Data received from a client
                     ssize_t bytesRead = recv(fds[i].fd, buffer, BUFFER_SIZE, 0);
                     if (bytesRead > 0) {
+                        // Process IRC commands here
+
                         buffer[bytesRead] = '\0';
                         Response res = getParsedCommand(buffer);
-                        std::cout << "Type: " << res.type << std::endl;
-                        std::cout << "Command: " << res.command << std::endl;
-                        // Process IRC commands here
+                        std::cout << res.command << std::endl;
+                        for (size_t i = 0; i < res.commandParameters.size(); i++) {
+                            std::cout << res.commandParameters[i] << std::endl;
+                        }
+                        std::cout << std::endl;
                     } else if (bytesRead == 0) {
                         std::cout << "Client disconnected" << std::endl;
                         // Remove the disconnected client from the poll set
