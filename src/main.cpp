@@ -17,28 +17,26 @@
 #define MAX_CLIENTS 10
 #define BUFFER_SIZE 1024
 
-enum Type {
-    PING,
-    PONG,
-    USER,
-    NICK,
-    JOIN,
-    PART,
-    PRIVMSG,
-    QUIT,
-    MODE,
-    WHOIS,
-    TOPIC,
-    NOTICE
-};
+// enum Type {
+//     PING,
+//     PONG,
+//     USER,
+//     NICK,
+//     JOIN,
+//     PART,
+//     PRIVMSG,
+//     QUIT,
+//     MODE,
+//     WHOIS,
+//     TOPIC,
+//     NOTICE
+// };
 
 struct Response {
     std::string prefix;
     std::string command;
     std::vector<std::string> commandParameters;
 };
-
-// "PRIVMSG #a :test"
 
 Response getParsedCommand(std::string str) {
 	Response result;
@@ -61,6 +59,15 @@ Response getParsedCommand(std::string str) {
     }
 
 	return result;
+}
+
+void answer(Response res, int clientSocket) {
+    std::string sendMessage;
+    if (res.command == "PING") {
+        sendMessage = "PONG " + res.commandParameters[0];
+        std::cout << "answer : " << sendMessage << std::endl;
+        send(clientSocket, sendMessage.c_str(), sendMessage.length(), 0);
+    }
 }
 
 int main() {
@@ -100,7 +107,7 @@ int main() {
 	}
 
 	// Accept connections
-struct pollfd fds[MAX_CLIENTS + 1];
+    struct pollfd fds[MAX_CLIENTS + 1];
     fds[0].fd = serverSocket;
     fds[0].events = POLLIN;
     int numClients = 1;
@@ -143,6 +150,9 @@ struct pollfd fds[MAX_CLIENTS + 1];
                             std::cout << res.commandParameters[i] << std::endl;
                         }
                         std::cout << std::endl;
+                        
+                        answer(res, clientSockets[numClients - 2]);
+
                     } else if (bytesRead == 0) {
                         std::cout << "Client disconnected" << std::endl;
                         // Remove the disconnected client from the poll set
