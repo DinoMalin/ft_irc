@@ -32,17 +32,29 @@
 //     NOTICE
 // };
 
-struct Response {
+struct Message {
     std::string prefix;
     std::string command;
     std::vector<std::string> commandParameters;
     std::string remainder;
+    std::string fullCmd;
 };
 
-Response getParsedCommand(std::string str) {
-	Response result;
+Message getParsedCommand(std::string str) {
+	Message result;
     std::stringstream ss(str);
     std::string currentParam;
+
+    // Length shouldn't excess 512 bytes
+    if (str[str.length() - 2] != '\r' || str[str.length() - 1] != '\n')
+        str.append("\r\n");
+    if (str.length() > 512) {
+        str.erase(510, str.length() - 1);
+        str.append("\r\n");
+    }
+
+
+    result.fullCmd = str;
 
     // Get prefix
     if (str[0] == ':') {
@@ -56,6 +68,14 @@ Response getParsedCommand(std::string str) {
     // Get args
     while (ss >> currentParam && currentParam[0] != ':') {
         result.commandParameters.push_back(currentParam);
+    }
+    
+    // There must not be more than 15 args
+    if (result.commandParameters.size() > 15) {
+        while (result.commandParameters.size() != 15) {
+            result.commandParameters.pop_back();
+        }
+        return result;
     }
 
     // Get remainder
@@ -71,17 +91,17 @@ Response getParsedCommand(std::string str) {
 	return result;
 }
 
-void answer(Response res, int clientSocket) {
+void answer(Message message, int clientSocket) {
     std::string sendMessage;
-    if (res.command == "PING") {
-        sendMessage = "PONG " + res.commandParameters[0];
+    if (message.command == "PING") {
+        sendMessage = "PONG " + message.commandParameters[0];
         std::cout << "answer : " << sendMessage << std::endl;
         send(clientSocket, sendMessage.c_str(), sendMessage.length(), 0);
     }
 }
 
 int main () {
-    Response res = getParsedCommand(":doctor!doctor@baz.example.org PRIVMSG rory :Hey Rory, I'm leaving...");
+    Message res = getParsedCommand(":doctor!doctor@baz.example.org PRIVMSG rory :Hey Rory, I'm leaving...\r\n");
 
     std::cout << "PREFIX\t\t: " << res.prefix << std::endl;
     std::cout << "CMD\t\t: " << res.command << std::endl;
@@ -89,6 +109,7 @@ int main () {
         std::cout << "ARG[" << i << "]\t\t: " << res.commandParameters[i] << std::endl;
     }
     std::cout << "REMAINDER\t: " << res.remainder << std::endl;
+    std::cout << "FULL CMD\t: " << res.fullCmd << std::endl;
 }
 
 // int main() {
