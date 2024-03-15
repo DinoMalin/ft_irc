@@ -17,6 +17,8 @@
 #define MAX_CLIENTS 10
 #define BUFFER_SIZE 1024
 
+#define CRLF "\r\n"
+
 // enum Type {
 //     PING,
 //     PONG,
@@ -32,29 +34,38 @@
 //     NOTICE
 // };
 
+struct Reply {
+    std::string prefix;
+    int         code;
+    std::string target;
+};
+
 struct Message {
     std::string prefix;
     std::string command;
     std::vector<std::string> commandParameters;
     std::string remainder;
     std::string fullCmd;
+    int         errorCode;
 };
 
 Message getParsedCommand(std::string str) {
 	Message result;
-    std::stringstream ss(str);
-    std::string currentParam;
 
     // Length shouldn't excess 512 bytes
     if (str[str.length() - 2] != '\r' || str[str.length() - 1] != '\n')
-        str.append("\r\n");
-    if (str.length() > 512) {
+        result.errorCode = 421;
+    else {
+        str.erase(str.length() - 2, str.length() - 1);
+    }  
+    if (str.length() > 512 && result.errorCode != 421) {
         str.erase(510, str.length() - 1);
-        str.append("\r\n");
     }
 
-
     result.fullCmd = str;
+
+    std::stringstream ss(str);
+    std::string currentParam;
 
     // Get prefix
     if (str[0] == ':') {
