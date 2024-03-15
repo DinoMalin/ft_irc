@@ -52,12 +52,14 @@ struct Message {
 Message getParsedCommand(std::string str) {
 	Message result;
 
-    // Length shouldn't excess 512 bytes
-    if (str[str.length() - 2] != '\r' || str[str.length() - 1] != '\n')
+    // Message must end with CRLF
+    if (str.substr(str.length() - 2) != CRLF)
         result.errorCode = 421;
     else {
         str.erase(str.length() - 2, str.length() - 1);
-    }  
+    }
+
+    // Length shouldn't excess 512 bytes
     if (str.length() > 512 && result.errorCode != 421) {
         str.erase(510, str.length() - 1);
     }
