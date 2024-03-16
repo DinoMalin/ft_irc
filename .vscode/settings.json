@@ -2,6 +2,8 @@
     "files.associations": {
         "sstream": "cpp",
         "algorithm": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "cerrno": "cpp"
     }
 }
