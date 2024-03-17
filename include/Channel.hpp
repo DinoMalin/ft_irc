@@ -18,17 +18,17 @@ class Channel {
         std::string _topic;
 		ChannelType _type;
         std::string _password;
-		std::vector<Client&> _clients;
-        std::vector<Client&> _registered;
-        std::vector<Client&> _operators;
-        bool _canUseTopic;
-
         int _limitUsers;
+        bool _canUseTopic;
         bool _limited;
         bool _inviteOnly;
+		std::vector<Client*> _clients;
+        std::vector<Client*> _registered;
+        std::vector<Client*> _operators;
+
 	public:
 		Channel(std::string name, ChannelType type);
-        Channel(std::string name, ChannelType type, Client& op);
+        Channel(std::string name, ChannelType type, Client *op);
         ~Channel();
 		std::string getName() const;
         std::string getTopic() const;
@@ -45,16 +45,16 @@ class Channel {
         void setPassword(std::string password);
         void setLimitUsers(int limitUsers);
         void setLimited(bool limited);
-        void addClient(Client& client);
+        void addClient(Client *client);
         void removeClient(std::string username);
-        void addRegistered(Client& client);
+        void addRegistered(Client *client);
         void removeRegistered(std::string username);
         void clearRegistered();
         bool isRegistered(std::string username);
         bool isInChannel(std::string nickname);
-        void addOperator(Client& client);
+        void addOperator(Client *client);
         void removeOperator(std::string username);
-        bool isOperator(std::string username) const;
+        bool isOperator(std::string username);
 		void sendChannel(std::string message) const;
         void setInviteOnly(bool inv);
         bool isInviteOnly();

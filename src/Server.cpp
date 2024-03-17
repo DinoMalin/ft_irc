@@ -1,21 +1,21 @@
 #include "Server.hpp"
 
-Server::Server(std::string password) : _clientAddrSize(sizeof(_clientAddr)), _numClients(1), _password(password) {
+Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1) {
     _fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
 
-    stringToFunc["PING"] = &Server::handlePING;
-    stringToFunc["PASS"] = &Server::handlePASS;
-    stringToFunc["NICK"] = &Server::handleNICK;
-    stringToFunc["USER"] = &Server::handleUSER;
-    stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
-    stringToFunc["JOIN"] = &Server::handleJOIN;
-    stringToFunc["PART"] = &Server::handlePART;
-    stringToFunc["LIST"] = &Server::handleLIST;
-    stringToFunc["KICK"] = &Server::handleKICK;
-    stringToFunc["INVITE"] = &Server::handleINVITE;
-    stringToFunc["TOPIC"] = &Server::handleTOPIC;
-    stringToFunc["MODE"] = &Server::handleMODE;
+    _stringToFunc["PING"] = &Server::handlePING;
+    _stringToFunc["PASS"] = &Server::handlePASS;
+    _stringToFunc["NICK"] = &Server::handleNICK;
+    _stringToFunc["USER"] = &Server::handleUSER;
+    _stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
+    _stringToFunc["JOIN"] = &Server::handleJOIN;
+    _stringToFunc["PART"] = &Server::handlePART;
+    _stringToFunc["LIST"] = &Server::handleLIST;
+    _stringToFunc["KICK"] = &Server::handleKICK;
+    _stringToFunc["INVITE"] = &Server::handleINVITE;
+    _stringToFunc["TOPIC"] = &Server::handleTOPIC;
+    _stringToFunc["MODE"] = &Server::handleMODE;
 
     _socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket < 0) {
@@ -32,7 +32,7 @@ Server::Server(std::string password) : _clientAddrSize(sizeof(_clientAddr)), _nu
     memset(&_serverAddr, 0, sizeof(_serverAddr));
 	_serverAddr.sin_family = AF_INET;
 	_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	_serverAddr.sin_port = htons(PORT);
+	_serverAddr.sin_port = htons(port);
 	if (bind(_socket, (struct sockaddr*)&_serverAddr, sizeof(_serverAddr)) < 0) {
 		perror("Error in bind");
 		exit(EXIT_FAILURE);
@@ -44,18 +44,30 @@ Server::Server(std::string password) : _clientAddrSize(sizeof(_clientAddr)), _nu
 	}
 }
 
+Server::~Server() {
+    // for (std::vector<Client *>::iterator it = _allClients.begin(); it != _allClients.end(); ++it) {
+    //         delete *it;
+    //         _allClients.erase(it);
+    // }
+    for (std::vector<Channel *>::iterator it = _allChannels.begin(); it != _allChannels.end(); ++it) {
+        delete *it;
+        // _allChannels.erase(it);
+    }
+}
+
 void Server::treatNewConnexion() {
     _clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
+    // _allClients.push_back(_clients[_numClients - 1]);
     if (_clients[_numClients - 1].getSocket() < 0) {
-        perror("Error in cacacept");
+        perror("Error in accept");
     } else {
-        std::cout << "New connection cacated" << std::endl;
+        std::cout << "New connection accepted" << std::endl;
         _fds[_numClients].fd = _clients[_numClients - 1].getSocket();
         _fds[_numClients].events = POLLIN;
-        ++_numClients;
 
-        char welcomeMessage[] = WELCOME_MESSAGE;
-        send(_clients[_numClients - 2].getSocket(), welcomeMessage, strlen(welcomeMessage), 0);
+        char buffer[512];
+        recv(_fds[_numClients].fd, buffer, BUFFER_SIZE, 0);
+        ++_numClients;
     }
 }
 
@@ -79,9 +91,9 @@ void Server::receiveMessage(int index) {
         --_numClients;
     } else if (bytesRead > 0) {
         buffer[bytesRead] = '\0';
-
         Message res = getParsedCommand(buffer);
-        stringToFunc[res.command](res, _clients[index]);
+
+        (this->*_stringToFunc[res.command])(_clients[index], res);
     }
 }
 
@@ -94,8 +106,10 @@ void Server::run() {
 
         for (int i = 0; i < _numClients; ++i) {
             if (_fds[i].revents & POLLIN) {
-                if (i == 0)
+                std::cout << "cacatest" << std::endl;
+                if (i == 0) {
                     treatNewConnexion();
+                }
                 else
                     receiveMessage(i);
             }
@@ -105,10 +119,11 @@ void Server::run() {
 }
 
 Channel& Server::getChannel(std::string name) {
-    for (std::vector<Channel&>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-        if (it->getName() == name)
-            return *it;
+    for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        if ((*it)->getName() == name)
+            return *(*it);
     }
+    return *_channels[0];
 }
 
 Client& Server::getClient(std::string nickname) {
@@ -116,6 +131,7 @@ Client& Server::getClient(std::string nickname) {
         if (_clients[i].getNickname() == nickname)
             return _clients[i];
     }
+    return _clients[0];
 }
 
 bool Server::clientExist(std::string nickname) {
@@ -127,16 +143,9 @@ bool Server::clientExist(std::string nickname) {
 }
 
 bool Server::channelExist(std::string channel) {
-    for (int i = 0; i < _channels.size(); i++) {
-        if (_channels[i].getName() == channel)
+    for (size_t i = 0; i < _channels.size(); i++) {
+        if (_channels[i]->getName() == channel)
             return true;
     }
     return false;
-}
-
-void Server::reply(Client client, Message message) {
-    std::map<std::string, Funcs> map;
-
-
-
 }

@@ -86,3 +86,9 @@ void sendError(int code, Client client, Message message, std::string opt) {
         res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator" + CRLF;
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }
+
+std::string toString(int nb) {
+	std::stringstream ss;
+	ss << nb;
+	return ss.str();
+}

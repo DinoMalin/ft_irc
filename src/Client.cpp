@@ -1,4 +1,4 @@
-#include "Client.hpp";
+#include "Client.hpp"
 
 Client::Client() {}
 
@@ -24,4 +24,5 @@ Client& Client::operator=(const Client& src) {
     _username = src.getUsername();
     _nickname = src.getNickname();
     _password = src.getPassword();
+    return *this;
 }

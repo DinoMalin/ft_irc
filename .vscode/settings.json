@@ -4,6 +4,7 @@
         "algorithm": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "new": "cpp"
     }
 }

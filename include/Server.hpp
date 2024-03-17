@@ -7,23 +7,25 @@ class Client;
 
 class Server {
     private:
+        typedef void (Server::*Funcs) (Client, Message);
+        socklen_t _clientAddrSize;
         int _socket;
         std::string _password;
         Client _clients[MAX_CLIENTS];
+        std::vector<Client*> _allClients;
+        std::vector<Channel*> _allChannels;
 	    struct sockaddr_in _serverAddr;
         struct sockaddr_in _clientAddr;
-	    socklen_t _clientAddrSize;
 
-        std::map<std::string, Funcs> stringToFunc;
+        std::map<std::string, Funcs> _stringToFunc;
 
 
 	    struct pollfd _fds[MAX_CLIENTS + 1];
 	    int _numClients;
-        std::vector<Channel&> _channels;
+        std::vector<Channel*> _channels;
 
         void treatNewConnexion();
         void receiveMessage(int index);
-        void reply(Message message, std::string target);
 
 
         // ===== Command Handlers ===== //
@@ -54,8 +56,7 @@ class Server {
         bool channelExist(std::string channel);
         void reply(Client client, Message message);
     public:
-        Server(std::string password);
+        ~Server();
+        Server(std::string password, int port);
         void run();
 };
-
-typedef void (Server::*Funcs) (Client, Message);

@@ -1,7 +1,7 @@
 #include "Server.hpp"
-#include "header.hpp"
 
 void Server::handlePING(Client client, Message message) {
+    (void) message;
 	std::string res = "PONG " + std::string(ADDRESS) + CRLF;
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }
@@ -75,10 +75,10 @@ void Server::handlePRIVMSG(Client client, Message message) {
         return ;
     }
 
-    for (int i = 0; i < message.parameters.size(); i++) {
+    for (size_t i = 0; i < message.parameters.size(); i++) {
         bool keepGoing = false;
-        for (int j = 0; j < _channels.size(); j++) {
-            if (_channels[i].getName() == message.parameters[i])
+        for (size_t j = 0; j < _channels.size(); j++) {
+            if (_channels[i]->getName() == message.parameters[i])
                 keepGoing = true;
         }
         for (int i = 0; i < _numClients; i++) {
@@ -91,9 +91,9 @@ void Server::handlePRIVMSG(Client client, Message message) {
         }
     }
 
-    for (int i = 0; i < message.parameters.size(); i++) {
-        for (int j = 0; j < _channels.size(); j++) {
-            if (_channels[i].getName() == message.parameters[i]) {
+    for (size_t i = 0; i < message.parameters.size(); i++) {
+        for (size_t j = 0; j < _channels.size(); j++) {
+            if (_channels[i]->getName() == message.parameters[i]) {
                 res = ":" + client.getNickname() + " PRIVMSG " + client.getNickname() + " :" + message.remainder + CRLF;
                 send(client.getSocket(), res.c_str(), res.length(), 0);
                 continue ;
@@ -114,12 +114,10 @@ void Server::handleJOIN(Client client, Message message) {
         sendError(461, client, message, "");
         return ;
     }
-    if (!channelExist(message.parameters[1])) {
-        Channel newChannel(message.parameters[0], PUBLIC, client);
 
-        _channels.push_back(newChannel);
-        // sendError(403, client, message, message.parameters[0]);
-        // CODE A DEFINIR
+    bool channelDoesNotExist = false;
+    if (!channelExist(message.parameters[1])) {
+        channelDoesNotExist = true;
         return ;
     }
 
@@ -141,8 +139,14 @@ void Server::handleJOIN(Client client, Message message) {
         return ;
     }
 
-    getChannel(message.parameters[0]).addClient(client);
-    getChannel(message.parameters[0]).addRegistered(client);
+    if (channelDoesNotExist) {
+        Channel *newChannel = new Channel(message.parameters[0], PUBLIC, &client);
+        _channels.push_back(newChannel);
+        _allChannels.push_back(newChannel);
+    }
+
+    getChannel(message.parameters[0]).addClient(&client);
+    getChannel(message.parameters[0]).addRegistered(&client);
     std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }
@@ -171,18 +175,26 @@ void Server::handlePART(Client client, Message message) {
     
     res = ":" + std::string(ADDRESS) + " PART " + message.parameters[0] + CRLF;
     send(client.getSocket(), res.c_str(), res.length(), 0);
+
+    if (channel.getNbClients() == 0) {
+        for (size_t i = 0; i < _channels.size(); i++) {
+            if (_channels[i]->getName() == channel.getName())
+                _channels.erase(_channels.begin() + i);
+        }
+    }
 }
 
 void Server::handleLIST(Client client, Message message) {
+    (void) message;
     std::string res = ":" + std::string(ADDRESS) + " 321 " + client.getNickname() + "Channel :Users  Name" + CRLF;
     send(client.getSocket(), res.c_str(), res.length(), 0);
 
-    for (std::vector<Channel&>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-        if (it->getType() & PUBLIC || it->getType() & PRIVATE) {
-            if (it->getType & PRIVATE && !it->isInChannel(client.getNickname()))
-                res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " Prv " + it->getNbClients() + CRLF;
+    for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        if ((*it)->getType() & PUBLIC || (*it)->getType() & PRIVATE) {
+            if ((*it)->getType() & PRIVATE && !(*it)->isInChannel(client.getNickname()))
+                res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " Prv " + toString((*it)->getNbClients()) + CRLF;
             else
-                res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " " + it->getName() + " " + it->getNbClients() + " :" + it->getTopic() + CRLF;
+                res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " " + (*it)->getName() + " " + toString((*it)->getNbClients()) + " :" + (*it)->getTopic() + CRLF;
             send(client.getSocket(), res.c_str(), res.length(), 0);
         }
     }
@@ -217,7 +229,7 @@ void Server::handleKICK(Client client, Message message) {
     getChannel(message.parameters[0]).removeClient(getClient(message.parameters[1]).getNickname());
     getChannel(message.parameters[0]).removeRegistered(getClient(message.parameters[1]).getNickname());
     
-    std::string res = ":" + std::string(ADDRESS) + " KICK " + message.parameters[0] + " " + message.parameters[1] + CRLF;
+    res = ":" + std::string(ADDRESS) + " KICK " + message.parameters[0] + " " + message.parameters[1] + CRLF;
     std::string kick = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " KICK "
         + message.parameters[0] + " " + message.parameters[1] + CRLF;
     if (message.parameters.size() == 3) {
@@ -256,7 +268,7 @@ void Server::handleINVITE(Client client, Message message) {
         return ;
     }
 
-    getChannel(message.parameters[1]).addRegistered(getClient(message.parameters[0]));
+    getChannel(message.parameters[1]).addRegistered(&getClient(message.parameters[0]));
     std::string res = ":" + std::string(ADDRESS) + " 341 " + client.getNickname() + " " + message.parameters[1] + " "
         + client.getNickname() + CRLF;
     std::string invite = ":" + std::string(ADDRESS) + "PRIVMSG " + message.parameters[0] + " :You have been invited to "
@@ -316,7 +328,7 @@ void Server::handleMODE(Client client, Message message) {
         return ;
     }
 
-    for (int i = 0; i < message.parameters[1].length(); i++) {
+    for (size_t i = 0; i < message.parameters[1].length(); i++) {
         if (std::string("itkol").find(message.parameters[1][i]) == std::string::npos) {
             sendError(472, client, message, std::string() + message.parameters[1][1]);
             return ;
@@ -336,8 +348,8 @@ void Server::handleMODE(Client client, Message message) {
     char operation = message.parameters[1][0];
     bool flag[127] = {false};
 
-    for (int i = 1; i < message.parameters[1].length(); i++)
-        flag[message.parameters[1][i]] = true;
+    for (size_t  i = 1; i < message.parameters[1].length(); i++)
+        flag[int(message.parameters[1][i])] = true;
 
     if (operation != '+' && operation != '-') {
         sendError(472, client, message, std::string() + message.parameters[1][1]);
@@ -375,7 +387,7 @@ void Server::handleMODE(Client client, Message message) {
                 return ;
             }
             if (operation == '+') {
-                channel.addOperator(getClient(message.parameters[2]));
+                channel.addOperator(&getClient(message.parameters[2]));
             }
             else
                 channel.removeOperator(getClient(message.parameters[2]).getNickname());

@@ -20,9 +20,9 @@
 #define BUFFER_SIZE 1024
 
 #define CRLF "\r\n"
-
-#define WELCOME_MESSAGE ":irc.server.com 001 user :Welcome to the Internet Relay Network user!user@hostname\n"
 #define ADDRESS "irc.example.com"
+
+class Client;
 
 struct Reply {
 	std::string prefix;
@@ -41,18 +41,4 @@ struct Message {
 
 Message getParsedCommand(std::string str);
 void sendError(int code, Client client, Message message, std::string opt);
-
-// enum Type {
-//     PING,
-//     PONG,
-//     USER,
-//     NICK,
-//     JOIN,
-//     PART,
-//     PRIVMSG,
-//     QUIT,
-//     MODE,
-//     WHOIS,
-//     TOPIC,
-//     NOTICE
-// };
+std::string toString(int nb);
