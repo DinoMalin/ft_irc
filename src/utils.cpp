@@ -50,36 +50,36 @@ Message getParsedCommand(std::string str) {
 void sendError(int code, Client client, Message message, std::string opt) {
     std::string res;
 
-    if (code == 461)
-        res = ":" + std::string(ADDRESS) + " 461 " + client.getNickname() + " " + message.fullCmd + " :Not enough parameters\r\n";
-    else if (code == 462)
-        res = ":" + std::string(ADDRESS) + " 462 " + client.getNickname() + " :You may not reregister\r\n";
-    else if (code == 464)
-        res = ":" + std::string(ADDRESS) + " 464 " + client.getNickname() + " :Password incorrect\r\n";
-    else if (code == 431)
-        res = ":" + std::string(ADDRESS) + " 431 " + client.getNickname() + " :No nickname given\r\n";
-    else if (code == 433)
-        res = ":" + std::string(ADDRESS) + " 433 " + client.getNickname() + " :Nickname is already in use\r\n";
-    else if (code == 411)
-        res = ":" + std::string(ADDRESS) + " 411 " + client.getNickname() + " ::No recipient given\r\n";
-    else if (code == 412)
-        res = ":" + std::string(ADDRESS) + " 412 " + client.getNickname() + " ::No text to send\r\n";
-    else if (code == 401)
-        res = ":" + std::string(ADDRESS) + " 401 " + client.getNickname() + " " + opt + " :No such nick/channel\r\n";
+    if (code == 401)
+        res = ":" + std::string(ADDRESS) + " 401 " + client.getNickname() + " " + opt + " :No such nick/channel" + CRLF;
     else if (code == 403)
-        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :Not such channel\r\n";
+        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :Not such channel" + CRLF;
+    else if (code == 411)
+        res = ":" + std::string(ADDRESS) + " 411 " + client.getNickname() + " ::No recipient given" + CRLF;
+    else if (code == 412)
+        res = ":" + std::string(ADDRESS) + " 412 " + client.getNickname() + " ::No text to send" + CRLF;
+    else if (code == 431)
+        res = ":" + std::string(ADDRESS) + " 431 " + client.getNickname() + " :No nickname given" + CRLF;
+    else if (code == 433)
+        res = ":" + std::string(ADDRESS) + " 433 " + client.getNickname() + " :Nickname is already in use" + CRLF;
     else if (code == 442)
-        res = ":" + std::string(ADDRESS) + " 442 " + client.getNickname() + " " + opt + " :You're not on that channel\r\n";
+        res = ":" + std::string(ADDRESS) + " 442 " + client.getNickname() + " " + opt + " :You're not on that channel" + CRLF;
     else if (code == 443)
-        res = ":" + std::string(ADDRESS) + " 443 " + client.getNickname() + " " + opt + " :is already on channel\r\n";
-    else if (code == 482)
-        res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator\r\n";
-    else if (code == 475)
-        res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)\r\n";
-    else if (code == 473)
-        res = ":" + std::string(ADDRESS) + " 473 " + client.getNickname() + " " + opt + " :Cannot join channel (+i)\r\n";
+        res = ":" + std::string(ADDRESS) + " 443 " + client.getNickname() + " " + opt + " :is already on channel" + CRLF;
+    else if (code == 461)
+        res = ":" + std::string(ADDRESS) + " 461 " + client.getNickname() + " " + message.fullCmd + " :Not enough parameters" + CRLF;
+    else if (code == 462)
+        res = ":" + std::string(ADDRESS) + " 462 " + client.getNickname() + " :You may not reregister" + CRLF;
+    else if (code == 464)
+        res = ":" + std::string(ADDRESS) + " 464 " + client.getNickname() + " :Password incorrect" + CRLF;
     else if (code == 471)
-        res = ":" + std::string(ADDRESS) + " 471 " + client.getNickname() + " " + opt + " :Cannot join channel (+l)\r\n";
+        res = ":" + std::string(ADDRESS) + " 471 " + client.getNickname() + " " + opt + " :Cannot join channel (+l)" + CRLF;
+    else if (code == 473)
+        res = ":" + std::string(ADDRESS) + " 473 " + client.getNickname() + " " + opt + " :Cannot join channel (+i)" + CRLF;
+    else if (code == 475)
+        res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)" + CRLF;
+    else if (code == 482)
+        res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator" + CRLF;
 
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }

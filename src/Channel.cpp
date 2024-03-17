@@ -1,77 +1,30 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, ChannelType type) : _name(name), _type(type), _password(""), _limited(false) {
-}
+Channel::Channel(std::string name, ChannelType type) : _name(name), _type(type), _password(""), _limited(false), _topic("") {}
+Channel::Channel(std::string name, ChannelType type, std::string password) : _name(name), _type(type), _password(password) {}
+Channel::~Channel() {}
 
-Channel::Channel(std::string name, ChannelType type, std::string password) : _name(name), _type(type), _password(password) {
-}
 
-Channel::~Channel() {
-}
-
-std::string Channel::getName() const {
-    return _name;
-}
-
-std::string Channel::getName() const {
-    return _name;
-}
-
-std::string Channel::getTopic() const {
-    return _topic;
-}
-
-std::string Channel::getPassword() const {
-    return _password;
-}
+std::string Channel::getName() const {return _name;}
+std::string Channel::getName() const {return _name;}
+std::string Channel::getTopic() const {return _topic;}
+std::string Channel::getPassword() const {return _password;}
 
 void Channel::setInviteOnly(bool inv) {
-    _inviteOnly = inv;
-}
+_inviteOnly = inv;}
 
-bool Channel::isInviteOnly() {
-    return _inviteOnly;
-}
+bool Channel::isInviteOnly() {return _inviteOnly;}
+bool Channel::isLimited() const {return _limited;}
+int Channel::getLimitUsers() const {return _limitUsers;}
+int Channel::getNbClients() const {return _clients.size();}
 
-bool Channel::isLimited() const {
-    return _limited;
-}
-
-int Channel::getLimitUsers() const {
-    return _limitUsers;
-}
-
-int Channel::getNbClients() const {
-    return _clients.size();
-}
-
-void Channel::setName(std::string name) {
-    _name = name;
-}
-
-void Channel::setTopic(std::string topic) {
-    _topic = topic;
-}
-
-void Channel::setType(ChannelType type) {
-    _type = type;
-}
-
-void Channel::setPassword(std::string password) {
-    _password = password;
-}
-
-void Channel::addClient(Client& client) {
-    _clients.push_back(client);
-}
-
-void Channel::setLimitUsers(int limitUsers) {
-    _limitUsers = limitUsers;
-}
-
-void Channel::setLimited() {
-    _limited = true;
-}
+void Channel::setName(std::string name) {_name = name;}
+void Channel::setTopic(std::string topic) {_topic = topic;}
+void Channel::setType(ChannelType type) {_type = type;}
+void Channel::setPassword(std::string password) {_password = password;}
+void Channel::addClient(Client& client) {_clients.push_back(client);}
+void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}
+void Channel::setLimited() {_limited = true;}
 
 void Channel::removeClient(std::string nickname) {
     for (std::vector<Client&>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
