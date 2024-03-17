@@ -332,9 +332,10 @@ void Server::handleMODE(Client client, Message message) {
         sendError(482, client, message, channel.getName());
         return ;
     }
-    
+
     char operation = message.parameters[1][0];
     bool flag[127] = {false};
+
     for (int i = 1; i < message.parameters[1].length(); i++)
         flag[message.parameters[1][i]] = true;
 
