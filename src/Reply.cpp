@@ -319,7 +319,7 @@ void Server::handleMODE(Client client, Message message) {
 		sendError(461, client, message, "");
 		return ;
 	} 
-	if (channelExist(message.parameters[0])) {
+	if (!channelExist(message.parameters[0])) {
 		sendError(403, client, message, message.parameters[0]);
 		return ;
 	}
