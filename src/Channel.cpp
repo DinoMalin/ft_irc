@@ -1,7 +1,9 @@
 #include "Channel.hpp"
 
 Channel::Channel(std::string name, ChannelType type) : _name(name), _type(type), _password(""), _limited(false), _topic("") {}
-Channel::Channel(std::string name, ChannelType type, std::string password) : _name(name), _type(type), _password(password) {}
+Channel::Channel(std::string name, ChannelType type, Client& op) : _name(name), _type(type), _password(""), _limited(false), _topic("") {
+    _operators.push_back(op);
+}
 Channel::~Channel() {}
 
 
@@ -24,7 +26,7 @@ void Channel::setType(ChannelType type) {_type = type;}
 void Channel::setPassword(std::string password) {_password = password;}
 void Channel::addClient(Client& client) {_clients.push_back(client);}
 void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}
-void Channel::setLimited() {_limited = true;}
+void Channel::setLimited(bool limited) {_limited = limited;}
 
 void Channel::removeClient(std::string nickname) {
     for (std::vector<Client&>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
@@ -91,4 +93,12 @@ bool Channel::isOperator(std::string nickname) const {
 void Channel::sendChannel(std::string message) const {
     for (int i = 0; i < _clients.size(); i++)
         send(_clients[i].getSocket(), message.c_str(), message.length(), 0);
+}
+
+bool Channel::getCanUseTopic() const {
+    return _canUseTopic;
+}
+
+void Channel::setCanUseTopic(bool canUseTopic) {
+    _canUseTopic = canUseTopic;
 }

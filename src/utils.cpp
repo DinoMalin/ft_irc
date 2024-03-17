@@ -72,14 +72,17 @@ void sendError(int code, Client client, Message message, std::string opt) {
         res = ":" + std::string(ADDRESS) + " 462 " + client.getNickname() + " :You may not reregister" + CRLF;
     else if (code == 464)
         res = ":" + std::string(ADDRESS) + " 464 " + client.getNickname() + " :Password incorrect" + CRLF;
+	else if (code == 467)
+        res = ":" + std::string(ADDRESS) + " 467 " + client.getNickname() + " " + opt + " :Channel key already set" + CRLF;
     else if (code == 471)
         res = ":" + std::string(ADDRESS) + " 471 " + client.getNickname() + " " + opt + " :Cannot join channel (+l)" + CRLF;
+	else if (code == 472)
+        res = ":" + std::string(ADDRESS) + " 472 " + client.getNickname() + " " + opt + " :is unknown mode char to me" + CRLF;
     else if (code == 473)
         res = ":" + std::string(ADDRESS) + " 473 " + client.getNickname() + " " + opt + " :Cannot join channel (+i)" + CRLF;
     else if (code == 475)
         res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)" + CRLF;
     else if (code == 482)
         res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator" + CRLF;
-
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }
