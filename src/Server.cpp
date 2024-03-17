@@ -4,6 +4,19 @@ Server::Server(std::string password) : _clientAddrSize(sizeof(_clientAddr)), _nu
     _fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
 
+    stringToFunc["PING"] = &Server::handlePING;
+    stringToFunc["PASS"] = &Server::handlePASS;
+    stringToFunc["NICK"] = &Server::handleNICK;
+    stringToFunc["USER"] = &Server::handleUSER;
+    stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
+    stringToFunc["JOIN"] = &Server::handleJOIN;
+    stringToFunc["PART"] = &Server::handlePART;
+    stringToFunc["LIST"] = &Server::handleLIST;
+    stringToFunc["KICK"] = &Server::handleKICK;
+    stringToFunc["INVITE"] = &Server::handleINVITE;
+    stringToFunc["TOPIC"] = &Server::handleTOPIC;
+    stringToFunc["MODE"] = &Server::handleMODE;
+
     _socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket < 0) {
 		perror("Error in socket creacacation");
@@ -65,18 +78,10 @@ void Server::receiveMessage(int index) {
 
         --_numClients;
     } else if (bytesRead > 0) {
-        // Handle IRC command
         buffer[bytesRead] = '\0';
 
         Message res = getParsedCommand(buffer);
-        std::cout << res.command << std::endl;
-
-        for (size_t i = 0; i < res.parameters.size(); i++) {
-            std::cout << res.parameters[i] << std::endl;
-        }
-
-        std::cout << std::endl;
-        // answer(res, clientSockets[numClients - 2]);
+        stringToFunc[res.command](res, _clients[index]);
     }
 }
 
@@ -127,4 +132,11 @@ bool Server::channelExist(std::string channel) {
             return true;
     }
     return false;
+}
+
+void Server::reply(Client client, Message message) {
+    std::map<std::string, Funcs> map;
+
+
+
 }

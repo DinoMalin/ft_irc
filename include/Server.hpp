@@ -1,6 +1,7 @@
 #pragma once
 #include "header.hpp"
 #include "Client.hpp"
+#include <map>
 
 class Client;
 
@@ -13,6 +14,9 @@ class Server {
         struct sockaddr_in _clientAddr;
 	    socklen_t _clientAddrSize;
 
+        std::map<std::string, Funcs> stringToFunc;
+
+
 	    struct pollfd _fds[MAX_CLIENTS + 1];
 	    int _numClients;
         std::vector<Channel&> _channels;
@@ -20,6 +24,7 @@ class Server {
         void treatNewConnexion();
         void receiveMessage(int index);
         void reply(Message message, std::string target);
+
 
         // ===== Command Handlers ===== //
 
@@ -47,7 +52,10 @@ class Server {
         Client& getClient(std::string nickname);
         bool clientExist(std::string nickname);
         bool channelExist(std::string channel);
+        void reply(Client client, Message message);
     public:
         Server(std::string password);
         void run();
 };
+
+typedef void (Server::*Funcs) (Client, Message);
