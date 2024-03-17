@@ -13,8 +13,13 @@
 // 	std::cout << "FULL CMD\t: " << res.fullCmd << std::endl;
 // }
 
-int main() {
-	Server server;
+int main(int ac, char **av) {
+    if (ac != 2) {
+        std::cout << "Usage: ./ircserv <password> <port>" << std::endl;
+        return 0;
+    }
+
+	Server server(av[1]);
     server.run();
 
 	return 0;
