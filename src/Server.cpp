@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
 Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1) {
-    _fds[0].fd = _socket;
-	_fds[0].events = POLLIN;
 
     _stringToFunc["PING"] = &Server::handlePING;
     _stringToFunc["PASS"] = &Server::handlePASS;
@@ -18,6 +16,8 @@ Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientA
     _stringToFunc["MODE"] = &Server::handleMODE;
 
     _socket = socket(AF_INET, SOCK_STREAM, 0);
+    _fds[0].fd = _socket;
+	_fds[0].events = POLLIN;
 	if (_socket < 0) {
 		perror("Error in socket creacacation");
 		exit(EXIT_FAILURE);
@@ -67,6 +67,16 @@ void Server::treatNewConnexion() {
 
         char buffer[512];
         recv(_fds[_numClients].fd, buffer, BUFFER_SIZE, 0);
+        std::cout << buffer << std::endl;
+
+        std::string buff = buffer;
+        std::stringstream ss(buff);
+        std::string line;
+        while (std::getline(ss, line)) {
+            Message res = getParsedCommand(line);
+            if (commandsIsImplemented(res.command))
+                (this->*_stringToFunc[res.command])(_clients[0], res);
+        }
         ++_numClients;
     }
 }
@@ -92,8 +102,8 @@ void Server::receiveMessage(int index) {
     } else if (bytesRead > 0) {
         buffer[bytesRead] = '\0';
         Message res = getParsedCommand(buffer);
-
-        (this->*_stringToFunc[res.command])(_clients[index], res);
+        if (commandsIsImplemented(res.command))
+            (this->*_stringToFunc[res.command])(_clients[index], res);
     }
 }
 
@@ -106,7 +116,6 @@ void Server::run() {
 
         for (int i = 0; i < _numClients; ++i) {
             if (_fds[i].revents & POLLIN) {
-                std::cout << "cacatest" << std::endl;
                 if (i == 0) {
                     treatNewConnexion();
                 }
@@ -145,6 +154,14 @@ bool Server::clientExist(std::string nickname) {
 bool Server::channelExist(std::string channel) {
     for (size_t i = 0; i < _channels.size(); i++) {
         if (_channels[i]->getName() == channel)
+            return true;
+    }
+    return false;
+}
+
+bool Server::commandsIsImplemented(std::string str) {
+    for (std::map<std::string, Funcs>::iterator it = _stringToFunc.begin(); it != _stringToFunc.end(); it++) {
+        if (it->first == str)
             return true;
     }
     return false;

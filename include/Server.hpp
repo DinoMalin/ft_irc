@@ -26,7 +26,7 @@ class Server {
 
         void treatNewConnexion();
         void receiveMessage(int index);
-
+        bool commandsIsImplemented(std::string str);
 
         // ===== Command Handlers ===== //
 
