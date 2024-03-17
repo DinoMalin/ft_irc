@@ -22,6 +22,10 @@ std::string Client::getPassword() const {
     return _password;
 }
 
+std::string Client::getHostname() const {
+    return _hostname;
+}
+
 bool Client::getRegistered() const {
     return _registered;
 }
@@ -29,6 +33,7 @@ bool Client::getRegistered() const {
 void Client::setUsername(std::string username) {
     _username = username;
 }
+
 
 void Client::setNickname(std::string nickname) {
     _nickname = nickname;
@@ -40,6 +45,10 @@ void Client::setPassword(std::string password) {
 
 void Client::setRegistered() {
     _registered = true;
+}
+
+void Client::setHostname(std::string hostname) {
+    _hostname = hostname;
 }
 
 Client& Client::operator=(const Client& src) {

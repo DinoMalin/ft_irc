@@ -108,7 +108,23 @@ Channel& Server::getChannel(std::string name) {
 
 Client& Server::getClient(std::string nickname) {
     for (int i = 0; i < MAX_CLIENTS; ++i) {
-        if (_clients[i].getName() == name)
-            return *_clients[i];
+        if (_clients[i].getNickname() == nickname)
+            return _clients[i];
     }
+}
+
+bool Server::clientExist(std::string nickname) {
+    for (int i = 0; i < _numClients; i++) {
+        if (_clients[i].getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
+
+bool Server::channelExist(std::string channel) {
+    for (int i = 0; i < _channels.size(); i++) {
+        if (_channels[i].getName() == channel)
+            return true;
+    }
+    return false;
 }

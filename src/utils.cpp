@@ -65,13 +65,21 @@ void sendError(int code, Client client, Message message, std::string opt) {
     else if (code == 412)
         res = ":" + std::string(ADDRESS) + " 412 " + client.getNickname() + " ::No text to send\r\n";
     else if (code == 401)
-        res = ":" + std::string(ADDRESS) + " 401 " + client.getNickname() + " " + opt + " :No such nick/channel\r\n"; // i
+        res = ":" + std::string(ADDRESS) + " 401 " + client.getNickname() + " " + opt + " :No such nick/channel\r\n";
     else if (code == 403)
-        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :Not such channel\r\n"; // 0
+        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :Not such channel\r\n";
     else if (code == 442)
-        res = ":" + std::string(ADDRESS) + " 442 " + client.getNickname() + " " + opt + " :You're not on that channel\r\n"; // 0
-    else if (code == 442)
-        std::string res =  ":irc.server.com 321 " + client.getNickname() + "Channel :Users  Name";
+        res = ":" + std::string(ADDRESS) + " 442 " + client.getNickname() + " " + opt + " :You're not on that channel\r\n";
+    else if (code == 443)
+        res = ":" + std::string(ADDRESS) + " 443 " + client.getNickname() + " " + opt + " :is already on channel\r\n";
+    else if (code == 482)
+        res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator\r\n";
+    else if (code == 475)
+        res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)\r\n";
+    else if (code == 473)
+        res = ":" + std::string(ADDRESS) + " 473 " + client.getNickname() + " " + opt + " :Cannot join channel (+i)\r\n";
+    else if (code == 471)
+        res = ":" + std::string(ADDRESS) + " 471 " + client.getNickname() + " " + opt + " :Cannot join channel (+l)\r\n";
 
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }

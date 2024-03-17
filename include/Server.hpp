@@ -45,6 +45,8 @@ class Server {
 
         Channel& getChannel(std::string name);
         Client& getClient(std::string nickname);
+        bool clientExist(std::string nickname);
+        bool channelExist(std::string channel);
     public:
         Server(std::string password);
         void run();

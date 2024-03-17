@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, ChannelType type) : _name(name), _type(type), _password("") {
+Channel::Channel(std::string name, ChannelType type) : _name(name), _type(type), _password(""), _limited(false) {
 }
 
 Channel::Channel(std::string name, ChannelType type, std::string password) : _name(name), _type(type), _password(password) {
@@ -25,6 +25,22 @@ std::string Channel::getPassword() const {
     return _password;
 }
 
+void Channel::setInviteOnly(bool inv) {
+    _inviteOnly = inv;
+}
+
+bool Channel::isInviteOnly() {
+    return _inviteOnly;
+}
+
+bool Channel::isLimited() const {
+    return _limited;
+}
+
+int Channel::getLimitUsers() const {
+    return _limitUsers;
+}
+
 int Channel::getNbClients() const {
     return _clients.size();
 }
@@ -47,6 +63,14 @@ void Channel::setPassword(std::string password) {
 
 void Channel::addClient(Client& client) {
     _clients.push_back(client);
+}
+
+void Channel::setLimitUsers(int limitUsers) {
+    _limitUsers = limitUsers;
+}
+
+void Channel::setLimited() {
+    _limited = true;
 }
 
 void Channel::removeClient(std::string nickname) {

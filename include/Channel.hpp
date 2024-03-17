@@ -21,6 +21,10 @@ class Channel {
 		std::vector<Client&> _clients;
         std::vector<Client&> _registered;
         std::vector<Client&> _operators;
+
+        int _limitUsers;
+        bool _limited;
+        bool _inviteOnly;
 	public:
 		Channel(std::string name, ChannelType type);
         Channel(std::string name, ChannelType type, std::string password);
@@ -30,10 +34,14 @@ class Channel {
         ChannelType getType() const;
         std::string getPassword() const;
         int getNbClients() const;
+        int getLimitUsers() const;
+        bool isLimited() const;
         void setName(std::string name);
         void setTopic(std::string topic);
         void setType(ChannelType type);
         void setPassword(std::string password);
+        void setLimitUsers(int limitUsers);
+        void setLimited();
         void addClient(Client& client);
         void removeClient(std::string username);
         void addRegistered(Client& client);
@@ -45,4 +53,6 @@ class Channel {
         void removeOperator(std::string username);
         bool isOperator(std::string username) const;
 		void sendChannel(std::string message) const;
+        void setInviteOnly(bool inv);
+        bool isInviteOnly();
 };
