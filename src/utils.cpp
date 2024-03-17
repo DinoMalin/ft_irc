@@ -53,7 +53,7 @@ void sendError(int code, Client client, Message message, std::string opt) {
     if (code == 401)
         res = ":" + std::string(ADDRESS) + " 401 " + client.getNickname() + " " + opt + " :No such nick/channel" + CRLF;
     else if (code == 403)
-        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :Not such channel" + CRLF;
+        res = ":" + std::string(ADDRESS) + " 403 " + client.getNickname() + " " + opt + " :No such channel" + CRLF;
     else if (code == 411)
         res = ":" + std::string(ADDRESS) + " 411 " + client.getNickname() + " ::No recipient given" + CRLF;
     else if (code == 412)

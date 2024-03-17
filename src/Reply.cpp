@@ -298,8 +298,17 @@ void Server::handleTOPIC(Client client, Message message) {
     }
 }
 
-void Server::handleMODE(Client client, Message message, char flag) {
-    
+void Server::handleMODE(Client client, Message message) {
+    if (message.parameters.size() < 2) {
+        sendError(461, client, message, "");
+        return ;
+    } 
+    if (channelExist(message.parameters[0])) {
+        sendError(403, client, message, "")
+    }
+
+    char flag;
+
     switch (flag) {
         case 'i':
             break;

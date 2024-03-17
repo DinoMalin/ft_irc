@@ -41,7 +41,7 @@ class Server {
         void handleKICK(Client client, Message message);
         void handleINVITE(Client client, Message message);
         void handleTOPIC(Client client, Message message);
-        void handleMODE(Client client, Message message, char flag);
+        void handleMODE(Client client, Message message);
 
         Channel& getChannel(std::string name);
         Client& getClient(std::string nickname);
