@@ -22,7 +22,7 @@ class Client {
 		std::string getUsername() const;
 		std::string getNickname() const;
 		std::string getPassword() const;
-		std::string getRegister() const;
+		bool getRegistered() const;
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setPassword(std::string password);

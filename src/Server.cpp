@@ -71,8 +71,8 @@ void Server::receiveMessage(int index) {
         Message res = getParsedCommand(buffer);
         std::cout << res.command << std::endl;
 
-        for (size_t i = 0; i < res.commandParameters.size(); i++) {
-            std::cout << res.commandParameters[i] << std::endl;
+        for (size_t i = 0; i < res.parameters.size(); i++) {
+            std::cout << res.parameters[i] << std::endl;
         }
 
         std::cout << std::endl;
@@ -97,4 +97,18 @@ void Server::run() {
         }
     }
 	close(_socket);
+}
+
+Channel& Server::getChannel(std::string name) {
+    for (std::vector<Channel&>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        if (it->getName() == name)
+            return *it;
+    }
+}
+
+Client& Server::getClient(std::string nickname) {
+    for (int i = 0; i < MAX_CLIENTS; ++i) {
+        if (_clients[i].getName() == name)
+            return *_clients[i];
+    }
 }

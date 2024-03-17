@@ -25,6 +25,10 @@ std::string Channel::getPassword() const {
     return _password;
 }
 
+int Channel::getNbClients() const {
+    return _clients.size();
+}
+
 void Channel::setName(std::string name) {
     _name = name;
 }
@@ -45,31 +49,63 @@ void Channel::addClient(Client& client) {
     _clients.push_back(client);
 }
 
-void Channel::removeClient(std::string username) {
+void Channel::removeClient(std::string nickname) {
     for (std::vector<Client&>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        if (it->getUsername() == username) {
+        if (it->getNickname() == nickname) {
             _operators.erase(it);
             return;
         }
     }
 }
 
+void Channel::addRegistered(Client& client) {
+    _registered.push_back(client);
+}
+
+void Channel::removeRegistered(std::string nickname) {
+    for (std::vector<Client&>::iterator it = _registered.begin(); it != _registered.end(); ++it) {
+        if (it->getNickname() == nickname) {
+            _registered.erase(it);
+            return;
+        }
+    }
+}
+
+void Channel::clearRegistered() {
+    _registered.clear();
+}
+
+bool Channel::isRegistered(std::string nickname) {
+    for (std::vector<Client&>::iterator it = _registered.begin(); it != _registered.end(); ++it) {
+        if (it->getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
+
+bool Channel::isInChannel(std::string nickname) {
+    for (int i = 0; i < _clients.size(); i++) {
+        if (_clients[i].getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
 void Channel::addOperator(Client& client) {
     _operators.push_back(client);
 }
 
-void Channel::removeOperator(std::string username) {
+void Channel::removeOperator(std::string nickname) {
     for (std::vector<Client&>::iterator it = _operators.begin(); it != _operators.end(); ++it) {
-        if (it->getUsername() == username) {
+        if (it->getNickname() == nickname) {
             _operators.erase(it);
             return;
         }
     }
 }
 
-bool Channel::isOperator(std::string username) const {
+bool Channel::isOperator(std::string nickname) const {
     for (std::vector<Client&>::iterator it = _operators.begin(); it != _operators.end(); ++it) {
-        if (it->getUsername() == username)
+        if (it->getNickname() == nickname)
             return true;
     }
     return false;

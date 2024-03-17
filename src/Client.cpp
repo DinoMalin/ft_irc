@@ -22,8 +22,8 @@ std::string Client::getPassword() const {
     return _password;
 }
 
-std::string Client::getRegister() const {
-    return _password;
+bool Client::getRegistered() const {
+    return _registered;
 }
 
 void Client::setUsername(std::string username) {

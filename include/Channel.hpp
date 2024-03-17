@@ -19,6 +19,7 @@ class Channel {
 		ChannelType _type;
         std::string _password;
 		std::vector<Client&> _clients;
+        std::vector<Client&> _registered;
         std::vector<Client&> _operators;
 	public:
 		Channel(std::string name, ChannelType type);
@@ -28,12 +29,18 @@ class Channel {
         std::string getTopic() const;
         ChannelType getType() const;
         std::string getPassword() const;
+        int getNbClients() const;
         void setName(std::string name);
         void setTopic(std::string topic);
         void setType(ChannelType type);
         void setPassword(std::string password);
         void addClient(Client& client);
         void removeClient(std::string username);
+        void addRegistered(Client& client);
+        void removeRegistered(std::string username);
+        void clearRegistered();
+        bool isRegistered(std::string username);
+        bool isInChannel(std::string nickname);
         void addOperator(Client& client);
         void removeOperator(std::string username);
         bool isOperator(std::string username) const;

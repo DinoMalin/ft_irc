@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <cstdlib>
 
 void send_message(int sockfd, const std::string& channel, const std::string& message) {
     std::string full_message = "PRIVMSG " + channel + " :" + message + "\r\n";
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
     }
 
     server_info = gethostbyname(server.c_str());
-    if (server_info == nullptr) {
+    if (server_info == NULL) {
         std::cerr << "Error: No such host\n";
         return 1;
     }
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
 
     std::string join_message = "JOIN " + channel + "\r\n";
     std::string user_message = "USER FeurBot 0 * :FeurBot\r\n";
-    send(sockfd, ("NICK FeurBot\r\n").c_str(), nickname.size() + 7, 0);
+    send(sockfd, "NICK FeurBot\r\n", 13, 0);
     send(sockfd, user_message.c_str(), user_message.size(), 0);
     send(sockfd, join_message.c_str(), join_message.size(), 0);
 

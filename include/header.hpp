@@ -33,13 +33,14 @@ struct Reply {
 struct Message {
 	std::string prefix;
 	std::string command;
-	std::vector<std::string> commandParameters;
+	std::vector<std::string> parameters;
 	std::string remainder;
 	std::string fullCmd;
 	int         errorCode;
 };
 
 Message getParsedCommand(std::string str);
+void sendError(int code, Client client, Message message, std::string opt);
 
 // enum Type {
 //     PING,

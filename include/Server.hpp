@@ -15,11 +15,11 @@ class Server {
 
 	    struct pollfd _fds[MAX_CLIENTS + 1];
 	    int _numClients;
+        std::vector<Channel&> _channels;
 
         void treatNewConnexion();
         void receiveMessage(int index);
         void reply(Message message, std::string target);
-
 
         // ===== Command Handlers ===== //
 
@@ -42,6 +42,9 @@ class Server {
         void handleINVITE(Client client, Message message);
         void handleTOPIC(Client client, Message message);
         void handleMODE(Client client, Message message, char flag);
+
+        Channel& getChannel(std::string name);
+        Client& getClient(std::string nickname);
     public:
         Server(std::string password);
         void run();
