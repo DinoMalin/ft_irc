@@ -136,6 +136,8 @@ void Server::handleJOIN(Client client, Message message) {
         return ;
     }
 
+    getChannel(message.parameters[0]).addClient(client);
+    getChannel(message.parameters[0]).addRegistered(client);
     std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic();
     send(client.getSocket(), res.c_str(), res.length(), 0);
 }
