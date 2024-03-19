@@ -81,8 +81,8 @@ void Server::handlePRIVMSG(Client client, Message message) {
 			if (_channels[i]->getName() == message.parameters[i])
 				keepGoing = true;
 		}
-		for (int i = 0; i < _numClients; i++) {
-			if (_clients[i].getNickname() == message.parameters[i])
+		for (int j = 0; j < _numClients; j++) {
+			if (_clients[j].getNickname() == message.parameters[i])
 				keepGoing = true;
 		}
 		if (!keepGoing) {
@@ -110,7 +110,7 @@ void Server::handlePRIVMSG(Client client, Message message) {
 }
 
 void Server::handleJOIN(Client client, Message message) {
-	if (message.parameters.size() < 2) {
+	if (message.parameters.size() < 1) {
 		sendError(461, client, message, "");
 		return ;
 	}
