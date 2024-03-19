@@ -110,13 +110,13 @@ void Server::handlePRIVMSG(Client client, Message message) {
 }
 
 void Server::handleJOIN(Client client, Message message) {
-	if (message.parameters.size() < 1) {
+	if (message.parameters.size() < 2) {
 		sendError(461, client, message, "");
 		return ;
 	}
 
 	bool channelDoesNotExist = false;
-	if (!channelExist(message.parameters[1])) {
+	if (!channelExist(message.parameters[0])) {
 		channelDoesNotExist = true;
 		return ;
 	}
