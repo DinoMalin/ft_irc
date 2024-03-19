@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1) {
+Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
 
 	_stringToFunc["PING"] = &Server::handlePING;
 	_stringToFunc["PASS"] = &Server::handlePASS;
@@ -82,8 +82,8 @@ void Server::treatNewConnexion() {
 }
 
 void Server::receiveMessage(int index) {
-	char buffer[BUFFER_SIZE];
-	ssize_t bytesRead = recv(_fds[index].fd, buffer, BUFFER_SIZE, 0);
+	char buff[512] = {};
+	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
 
 	if (bytesRead < 0) {
 		perror("Error in recv");
@@ -98,15 +98,18 @@ void Server::receiveMessage(int index) {
 		}
 		--_numClients;
 	} else if (bytesRead > 0) {
-		buffer[bytesRead] = '\0';
-		std::string buff = buffer;
-		std::stringstream ss(buff);
-		std::string line;
-		while (std::getline(ss, line)) {
-			std::cout << " old --> " << line;
-			Message res = getParsedCommand(line);
-			if (commandsIsImplemented(res.command))
-				(this->*_stringToFunc[res.command])(_clients[0], res);
+		_buffer += buff;
+		std::cout << _buffer << "|" << buff << std::endl;
+		if (_buffer.find("\r\n") != std::string::npos) {
+			_buffer += '\0';
+			std::stringstream ss(_buffer);
+			std::string line;
+			while (std::getline(ss, line) && _buffer.find("\r\n") != std::string::npos) {
+				Message res = getParsedCommand(line);
+				if (commandsIsImplemented(res.command))
+					(this->*_stringToFunc[res.command])(_clients[0], res);
+			}
+			_buffer = "";
 		}
 	}
 }

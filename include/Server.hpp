@@ -23,6 +23,7 @@ class Server {
 	    struct pollfd _fds[MAX_CLIENTS + 1];
 	    int _numClients;
         std::vector<Channel*> _channels;
+        std::string _buffer;
 
         void treatNewConnexion();
         void receiveMessage(int index);

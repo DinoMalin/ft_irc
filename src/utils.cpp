@@ -4,11 +4,11 @@
 Message getParsedCommand(std::string str) {
 	Message result;
 
-	if (str.substr(str.length() - 2) != CRLF)
-		result.errorCode = 421;
-	else {
-		str.erase(str.length() - 2, str.length() - 1);
-	}
+	// if (str.substr(str.length() - 2) != CRLF)
+	// 	result.errorCode = 421;
+	// else {
+	// 	str.erase(str.length() - 2, str.length() - 1);
+	// }
 
 	if (str.length() > 512 && result.errorCode != 421) {
 		str.erase(510, str.length() - 1);
