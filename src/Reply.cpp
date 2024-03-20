@@ -33,12 +33,10 @@ void Server::handleNICK(Client client, Message message) {
 		return ;
 	}
 
-	std::string newNick = message.parameters[0];
-	for (int i = 0; i < _numClients; i++) {
-		if (_clients[i].getNickname() == newNick) {
-			sendError(433, client, message, "");
-			return ;
-		}
+	std::string newNick(message.parameters[0]);
+	if (clientExist(message.parameters[0])) {
+		sendError(433, client, message, "");
+		return ;
 	}
 
 	client.setNickname(newNick);
@@ -55,6 +53,7 @@ void Server::handleUSER(Client client, Message message) {
 		sendError(461, client, message, "");
 		return ;
 	}
+	std::cout << "USER : " << client.getNickname() << std::endl;
 
 	client.setUsername(message.parameters[0]);
 	client.setHostname(message.parameters[1]);
