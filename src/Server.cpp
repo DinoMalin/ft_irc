@@ -97,6 +97,9 @@ void Server::receiveMessage(int index) {
 					(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
 			_buffer = "";
+			if (!_clients[index - 1].getRegistered()) {
+				// delete user
+			}
 		}
 	}
 }

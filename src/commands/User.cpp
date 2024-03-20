@@ -1,7 +1,9 @@
 #include "Server.hpp"
 
 void Server::handleUSER(Client &client, Message message) {
-	if (client.getRegistered() && client.getRegistered() && client.getNickname().length() && client.getUsername().length() && client.getHostname().length()) {
+	if (!client.getRegistered())
+		return ;
+	if (client.getNickname().length() && client.getUsername().length() && client.getHostname().length()) {
 		sendError(462, client, message, "");
 		return ;
 	}

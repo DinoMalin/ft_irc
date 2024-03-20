@@ -30,8 +30,8 @@ void Channel::setLimited(bool limited) {_limited = limited;}
 void Channel::removeClient(std::string nickname) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if ((*it)->getNickname() == nickname) {
-            _operators.erase(it);
-            return;
+            _clients.erase(it);
+            removeOperator((*it)->getNickname());
         }
     }
 }

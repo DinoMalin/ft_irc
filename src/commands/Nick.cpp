@@ -15,6 +15,4 @@ void Server::handleNICK(Client &client, Message message) {
 	}
 
 	client.setNickname(newNick);
-	res = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
 }

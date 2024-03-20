@@ -14,7 +14,5 @@ void Server::handlePASS(Client &client, Message message) {
 		return ;
 	}
 
-	std::string res = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + " :Password correct" + CRLF;
 	client.setRegistered();
-	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
