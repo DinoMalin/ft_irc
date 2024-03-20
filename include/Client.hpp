@@ -12,6 +12,7 @@ class Client {
 		std::string _nickname;
 		std::string _password;
 		std::string _hostname;
+		std::string _source;
 		Channel *_channel;
 
 		bool _registered;
@@ -24,11 +25,13 @@ class Client {
 		std::string getNickname() const;
 		std::string getPassword() const;
 		std::string getHostname() const;
+		std::string getSource() const;
 		bool getRegistered() const;
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setPassword(std::string password);
 		void setHostname(std::string hostname);
+		void setSource(std::string source);
 		void setRegistered();
 		Client& operator=(const Client& src);
 };

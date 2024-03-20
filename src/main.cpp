@@ -3,7 +3,7 @@
 
 int main(int ac, char **av) {
     if (ac != 3) {
-        std::cout << "Usage: ./ircserv <password> <port>" << std::endl;
+        std::cout << "Usage: ./ircserv <password> <caca>" << std::endl;
         return 0;
     }
 

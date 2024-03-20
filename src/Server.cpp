@@ -57,26 +57,12 @@ Server::~Server() {
 
 void Server::treatNewConnexion() {
 	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
-	// _allClients.push_back(_clients[_numClients - 1]);
 	if (_clients[_numClients - 1].getSocket() < 0) {
 		perror("Error in accept");
 	} else {
 		std::cout << "New connection accepted" << std::endl;
 		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
 		_fds[_numClients].events = POLLIN;
-
-		char buffer[512];
-		ssize_t bytesRead =  recv(_fds[_numClients].fd, buffer, BUFFER_SIZE, 0);
-		buffer[bytesRead] = '\0';
-		std::string buff = buffer;
-		std::stringstream ss(buff);
-		std::string line;
-		while (std::getline(ss, line)) {
-			std::cout << " new --> " << line;
-			Message res = getParsedCommand(line);
-			if (commandsIsImplemented(res.command))
-				(this->*_stringToFunc[res.command])(_clients[0], res);
-		}
 		++_numClients;
 	}
 }
@@ -98,6 +84,7 @@ void Server::receiveMessage(int index) {
 		}
 		--_numClients;
 	} else if (bytesRead > 0) {
+		std::cout << "index " << index << std::endl;
 		_buffer += buff;
 		std::cout << _buffer << "|" << buff << std::endl;
 		if (_buffer.find("\r\n") != std::string::npos) {
@@ -107,7 +94,7 @@ void Server::receiveMessage(int index) {
 			while (std::getline(ss, line) && _buffer.find("\r\n") != std::string::npos) {
 				Message res = getParsedCommand(line);
 				if (commandsIsImplemented(res.command))
-					(this->*_stringToFunc[res.command])(_clients[0], res);
+					(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
 			_buffer = "";
 		}
@@ -124,6 +111,7 @@ void Server::run() {
 		for (int i = 0; i < _numClients; ++i) {
 			if (_fds[i].revents & POLLIN) {
 				if (i == 0) {
+					std::cout << "le caca chie sur la colle\n";
 					treatNewConnexion();
 				}
 				else

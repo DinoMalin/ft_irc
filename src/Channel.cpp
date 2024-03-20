@@ -2,6 +2,8 @@
 
 Channel::Channel(std::string name, ChannelType type) : _name(name), _topic(""), _type(type), _password(""), _limited(false) {}
 Channel::Channel(std::string name, ChannelType type, Client *op) : _name(name), _topic(""), _type(type), _password(""), _limited(false) {
+    _registered.push_back(op);
+    _clients.push_back(op);
     _operators.push_back(op);
 }
 Channel::~Channel() {}

@@ -61,7 +61,7 @@ void sendError(int code, Client client, Message message, std::string opt) {
 	else if (code == 431)
 		res = ":" + std::string(ADDRESS) + " 431 " + client.getNickname() + " :No nickname given" + CRLF;
 	else if (code == 433)
-		res = ":" + std::string(ADDRESS) + " 433 " + client.getNickname() + " :Nickname is already in use" + CRLF;
+		res = ":" + std::string(ADDRESS) + " 433 " + client.getNickname() + " " + opt + " :Nickname is already in use" + CRLF;
 	else if (code == 442)
 		res = ":" + std::string(ADDRESS) + " 442 " + client.getNickname() + " " + opt + " :You're not on that channel" + CRLF;
 	else if (code == 443)

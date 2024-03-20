@@ -1,12 +1,15 @@
 #include "Server.hpp"
 
-void Server::handlePING(Client client, Message message) {
-	(void) message;
-	std::string res = "PONG " + std::string(ADDRESS) + CRLF;
+void Server::handlePING(Client &client, Message message) {
+	if (message.parameters.size() == 0) {
+		sendError(461, client, message, "");
+		return ;
+	}
+	std::string res = ":" + std::string(ADDRESS) + "PONG " + std::string(ADDRESS) + " :" + message.parameters[0] + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
 
-void Server::handlePASS(Client client, Message message) {
+void Server::handlePASS(Client &client, Message message) {
 	if (message.parameters.size() == 0) {
 		sendError(461, client, message, "");
 		return ;
@@ -25,7 +28,7 @@ void Server::handlePASS(Client client, Message message) {
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
 
-void Server::handleNICK(Client client, Message message) {
+void Server::handleNICK(Client &client, Message message) {
 	std::string res;
 
 	if (message.parameters.size() == 0) {
@@ -34,8 +37,8 @@ void Server::handleNICK(Client client, Message message) {
 	}
 
 	std::string newNick(message.parameters[0]);
-	if (clientExist(message.parameters[0])) {
-		sendError(433, client, message, "");
+	if (clientExist(newNick)) {
+		sendError(433, client, message, newNick);
 		return ;
 	}
 
@@ -44,7 +47,7 @@ void Server::handleNICK(Client client, Message message) {
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
 
-void Server::handleUSER(Client client, Message message) {
+void Server::handleUSER(Client &client, Message message) {
 	if (client.getRegistered() && client.getRegistered() && client.getNickname().length() && client.getUsername().length() && client.getHostname().length()) {
 		sendError(462, client, message, "");
 		return ;
@@ -53,16 +56,21 @@ void Server::handleUSER(Client client, Message message) {
 		sendError(461, client, message, "");
 		return ;
 	}
-	std::cout << "USER : " << client.getNickname() << std::endl;
 
 	client.setUsername(message.parameters[0]);
 	client.setHostname(message.parameters[1]);
-	std::string res = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + ":Welcome to the Internet Relay Network "
-		+ client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
+	client.setSource(client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname());
+	std::string res1 = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + " :Welcome to the Internet Relay Network, " + client.getSource() + CRLF;
+	std::string res2 = ":" + std::string(ADDRESS) + " 002 " + client.getNickname() + " :Your host is " + client.getSource() + ", running version 0.29.22" + CRLF;
+	std::string res3 = ":" + std::string(ADDRESS) + " 003 " + client.getNickname() + " :This server was created on 1st January 1970" + CRLF;
+	std::string res4 = ":" + std::string(ADDRESS) + " 004 " + client.getNickname() + " IrcServer 0.29.22 0 itkol " + CRLF;
+	send(client.getSocket(), res1.c_str(), res1.length(), 0);
+	send(client.getSocket(), res2.c_str(), res2.length(), 0);
+	send(client.getSocket(), res3.c_str(), res3.length(), 0);
+	send(client.getSocket(), res4.c_str(), res4.length(), 0);
 }
 
-void Server::handlePRIVMSG(Client client, Message message) {
+void Server::handlePRIVMSG(Client &client, Message message) {
 	std::string res;
 
 	if ((message.parameters.size() < 1) || (message.parameters.size() == 1 && message.remainder.length())) {
@@ -74,10 +82,10 @@ void Server::handlePRIVMSG(Client client, Message message) {
 		return ;
 	}
 
-	for (size_t i = 0; i < message.parameters.size(); i++) {
+	for (size_t i = 0; i < message.parameters.size() - 1; i++) {
 		bool keepGoing = false;
 		for (size_t j = 0; j < _channels.size(); j++) {
-			if (_channels[i]->getName() == message.parameters[i])
+			if (_channels[j]->getName() == message.parameters[i])
 				keepGoing = true;
 		}
 		for (int j = 0; j < _numClients; j++) {
@@ -91,66 +99,59 @@ void Server::handlePRIVMSG(Client client, Message message) {
 	}
 
 	for (size_t i = 0; i < message.parameters.size(); i++) {
-		for (size_t j = 0; j < _channels.size(); j++) {
-			if (_channels[i]->getName() == message.parameters[i]) {
-				res = ":" + client.getNickname() + " PRIVMSG " + client.getNickname() + " :" + message.remainder + CRLF;
-				send(client.getSocket(), res.c_str(), res.length(), 0);
-				continue ;
-			}
+		if (channelExist(message.parameters[i])) {
+			Channel channel = getChannel(message.parameters[i]);
+			std::string res = ":" + client.getNickname() + " PRIVMSG " + channel.getName() + " " + message.remainder + CRLF;
+			send(client.getSocket(), res.c_str(), res.length(), 0);
+			continue;
 		}
-		for (int i = 0; i < _numClients; i++) {
-			if (_clients[i].getNickname() == message.parameters[i]) {
-				res = ":" + client.getNickname() + " PRIVMSG " + client.getNickname() + " :" + message.remainder + CRLF;
-				send(client.getSocket(), res.c_str(), res.length(), 0);
-				continue ;
-			}
+		if (clientExist(message.parameters[i])) {
+			Client clientTarget = getClient(message.parameters[i]);
+			std::string res = ":" + client.getNickname() + " PRIVMSG " + clientTarget.getNickname() + " " + message.remainder + CRLF;
+			send(client.getSocket(), res.c_str(), res.length(), 0);
+			continue;
 		}
 	}
 }
 
-void Server::handleJOIN(Client client, Message message) {
+void Server::handleJOIN(Client &client, Message message) {
 	if (message.parameters.size() < 1) {
 		sendError(461, client, message, "");
 		return ;
 	}
-
-	bool channelDoesNotExist = false;
 	if (!channelExist(message.parameters[0])) {
-		channelDoesNotExist = true;
-		return ;
-	}
-
-	Channel channel = getChannel(message.parameters[0]);
-	if (channel.getPassword().length() && message.parameters.size() < 2 && !channel.isRegistered(client.getNickname())) {
-		sendError(475, client, message, message.parameters[0]);
-		return ;
-	}
-	if (channel.getPassword().length() && channel.getPassword() != message.parameters[1] && !channel.isRegistered(client.getNickname())) {
-		sendError(475, client, message, message.parameters[0]);
-		return ;
-	}
-	if (channel.isInviteOnly() && !channel.isRegistered(client.getNickname())) {
-		sendError(473, client, message, message.parameters[0]);
-		return ;
-	}
-	if (channel.isLimited() && channel.getLimitUsers() >= channel.getNbClients()) {
-		sendError(471, client, message, message.parameters[0]);
-		return ;
-	}
-
-	if (channelDoesNotExist) {
 		Channel *newChannel = new Channel(message.parameters[0], PUBLIC, &client);
 		_channels.push_back(newChannel);
 		_allChannels.push_back(newChannel);
+		std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + newChannel->getName() + CRLF;
+		send(client.getSocket(), res.c_str(), res.length(), 0);
 	}
-
-	getChannel(message.parameters[0]).addClient(&client);
-	getChannel(message.parameters[0]).addRegistered(&client);
-	std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
+	else {
+		Channel channel = getChannel(message.parameters[0]);
+		if (channel.getPassword().length() && message.parameters.size() < 2 && !channel.isRegistered(client.getNickname())) {
+			sendError(475, client, message, message.parameters[0]);
+			return ;
+		}
+		if (channel.getPassword().length() && channel.getPassword() != message.parameters[1] && !channel.isRegistered(client.getNickname())) {
+			sendError(475, client, message, message.parameters[0]);
+			return ;
+		}
+		if (channel.isInviteOnly() && !channel.isRegistered(client.getNickname())) {
+			sendError(473, client, message, message.parameters[0]);
+			return ;
+		}
+		if (channel.isLimited() && channel.getLimitUsers() >= channel.getNbClients()) {
+			sendError(471, client, message, message.parameters[0]);
+			return ;
+		}
+		getChannel(message.parameters[0]).addClient(&client);
+		getChannel(message.parameters[0]).addRegistered(&client);
+		std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
+		send(client.getSocket(), res.c_str(), res.length(), 0);
+	}
 }
 
-void Server::handlePART(Client client, Message message) {
+void Server::handlePART(Client &client, Message message) {
 	std::string res;
 
 	if (message.parameters.size() < 1) {
@@ -183,7 +184,7 @@ void Server::handlePART(Client client, Message message) {
 	}
 }
 
-void Server::handleLIST(Client client, Message message) {
+void Server::handleLIST(Client &client, Message message) {
 	(void) message;
 	std::string res = ":" + std::string(ADDRESS) + " 321 " + client.getNickname() + "Channel :Users  Name" + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), 0);
@@ -202,7 +203,7 @@ void Server::handleLIST(Client client, Message message) {
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
 
-void Server::handleKICK(Client client, Message message) {
+void Server::handleKICK(Client &client, Message message) {
 	std::string res;
 
 	if (message.parameters.size() < 2) {
@@ -239,7 +240,7 @@ void Server::handleKICK(Client client, Message message) {
 	send(getClient(message.parameters[1]).getSocket(), kick.c_str(), kick.length(), 0);
 }
 
-void Server::handleINVITE(Client client, Message message) {
+void Server::handleINVITE(Client &client, Message message) {
 	if (message.parameters.size() < 2) {
 		sendError(461, client, message, "");
 		return ;
@@ -276,7 +277,7 @@ void Server::handleINVITE(Client client, Message message) {
 	send(getClient(message.parameters[0]).getSocket(), invite.c_str(), invite.length(), 0);
 }
 
-void Server::handleTOPIC(Client client, Message message) {
+void Server::handleTOPIC(Client &client, Message message) {
 	if (message.parameters.size() < 1) {
 		sendError(461, client, message, "");
 		return ;
@@ -313,7 +314,7 @@ void Server::handleTOPIC(Client client, Message message) {
 	}
 }
 
-void Server::handleMODE(Client client, Message message) {
+void Server::handleMODE(Client &client, Message message) {
 	if (message.parameters.size() < 2) {
 		sendError(461, client, message, "");
 		return ;
