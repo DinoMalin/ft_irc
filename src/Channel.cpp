@@ -92,9 +92,10 @@ bool Channel::isOperator(std::string nickname) {
     return false;
 }
 
-void Channel::sendChannel(std::string message) const {
+void Channel::sendChannel(std::string message, Client author, bool skipAuthor) const {
     for (size_t i = 0; i < _clients.size(); i++)
-        send(_clients[i]->getSocket(), message.c_str(), message.length(), 0);
+        if (skipAuthor && author.getNickname() != _clients[i]->getNickname())
+            send(_clients[i]->getSocket(), message.c_str(), message.length(), 0);
 }
 
 bool Channel::getCanUseTopic() const {

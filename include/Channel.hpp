@@ -55,7 +55,7 @@ class Channel {
         void addOperator(Client *client);
         void removeOperator(std::string username);
         bool isOperator(std::string username);
-		void sendChannel(std::string message) const;
+		void sendChannel(std::string message, Client author, bool skipAuthor) const;
         void setInviteOnly(bool inv);
         bool isInviteOnly();
 };
