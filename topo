@@ -1,9 +1,16 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    segfault sur part : channel.cpp ligne 33
-    delete user quand pas register
-
+    - part semble pas marcher : Peut renvoyer messages
+    - Il semble que lorsqu'on join un channel on n'est pas operator
+    - topic marche pas : Fait quitter le channel
+    - nick marche pas
+    
+A TESTER :
+    - Invite
+    - Kick
+    - List
+    - Mode
 
 ==87992== Invalid read of size 8
 ==87992==    at 0x10C413: Channel::removeClient(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (Channel.cpp:32)

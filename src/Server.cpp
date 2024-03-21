@@ -103,9 +103,11 @@ void Server::receiveMessage(int index) {
 		while (pos != std::string::npos) {
 			std::string line = _buffer.substr(0, pos);
 			Message res = getParsedCommand(line);
-			if (commandsIsImplemented(res.command) && _clients[index - 1].getRegistered()
-				&& (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING"))
+			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered()
+				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING"))) {
+				std::cout << "SENDING REPLY" << std::endl;
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
+			}
 			
 			_buffer.erase(0, pos + 2);
 			pos = _buffer.find("\r\n");
@@ -123,7 +125,6 @@ void Server::run() {
 		for (int i = 0; i < _numClients; ++i) {
 			if (_fds[i].revents & POLLIN) {
 				if (i == 0) {
-					std::cout << "le caca chie sur la colle\n";
 					treatNewConnexion();
 				}
 				else
