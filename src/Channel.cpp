@@ -28,10 +28,12 @@ void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}
 void Channel::setLimited(bool limited) {_limited = limited;}
 
 void Channel::removeClient(std::string nickname) {
-    for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+    for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end();) {
         if ((*it)->getNickname() == nickname) {
-            _clients.erase(it);
             removeOperator((*it)->getNickname());
+            it = _clients.erase(it);
+        } else {
+            ++it;
         }
     }
 }

@@ -16,6 +16,7 @@ class Client {
 		Channel *_channel;
 
 		bool _registered;
+		bool _triedToRegister;
 	public:
 		Client();
 		Client(int socket);
@@ -27,11 +28,14 @@ class Client {
 		std::string getHostname() const;
 		std::string getSource() const;
 		bool getRegistered() const;
+		bool triedToRegister() const;
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setPassword(std::string password);
 		void setHostname(std::string hostname);
 		void setSource(std::string source);
+		void tryToRegister();
 		void setRegistered();
+		void clear();
 		Client& operator=(const Client& src);
 };

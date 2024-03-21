@@ -57,18 +57,29 @@ Server::~Server() {
 
 void Server::treatNewConnexion() {
 	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
+	bool isSet = false;
 	if (_clients[_numClients - 1].getSocket() < 0) {
 		perror("Error in accept");
 	} else {
 		std::cout << "New connection accepted" << std::endl;
-		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
-		_fds[_numClients].events = POLLIN;
+		for (int i = 1; i < _numClients; i++) {
+			if (_fds[i].fd == -1)
+			{
+				isSet = true;
+				_fds[i].fd = _clients[_numClients - 1].getSocket();
+				_fds[i].events = POLLIN;
+			}
+		}
+		if (!isSet) {	
+			_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
+			_fds[_numClients].events = POLLIN;
+		}
 		++_numClients;
 	}
 }
 
 void Server::receiveMessage(int index) {
-	char buff[512] = {};
+	char buff[BUFFER_SIZE] = {};
 	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
 
 	if (bytesRead < 0) {
@@ -85,21 +96,19 @@ void Server::receiveMessage(int index) {
 		--_numClients;
 	} else if (bytesRead > 0) {
 		std::cout << "index " << index << std::endl;
-		_buffer += buff;
+		_buffer += std::string(buff, bytesRead);
 		std::cout << _buffer << "|" << buff << std::endl;
-		if (_buffer.find("\r\n") != std::string::npos) {
-			_buffer += '\0';
-			std::stringstream ss(_buffer);
-			std::string line;
-			while (std::getline(ss, line) && _buffer.find("\r\n") != std::string::npos) {
-				Message res = getParsedCommand(line);
-				if (commandsIsImplemented(res.command))
-					(this->*_stringToFunc[res.command])(_clients[index - 1], res);
-			}
-			_buffer = "";
-			if (!_clients[index - 1].getRegistered()) {
-				// delete user
-			}
+	
+		size_t pos = _buffer.find("\r\n");
+		while (pos != std::string::npos) {
+			std::string line = _buffer.substr(0, pos);
+			Message res = getParsedCommand(line);
+			if (commandsIsImplemented(res.command) && _clients[index - 1].getRegistered()
+				&& (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING"))
+				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
+			
+			_buffer.erase(0, pos + 2);
+			pos = _buffer.find("\r\n");
 		}
 	}
 }
