@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, ChannelType type) : _name(name), _topic(""), _type(type), _password(""), _limited(false), _canUseTopic(true) {}
-Channel::Channel(std::string name, ChannelType type, Client *op) : _name(name), _topic(""), _type(type), _password(""), _limited(false), _canUseTopic(true) {
+Channel::Channel(std::string name) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true) {}
+Channel::Channel(std::string name, Client *op) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true) {
     _registered.push_back(op);
     _clients.push_back(op);
     _operators.push_back(op);
@@ -9,7 +9,6 @@ Channel::Channel(std::string name, ChannelType type, Client *op) : _name(name), 
 Channel::~Channel() {}
 
 std::string Channel::getName() const {return _name;}
-ChannelType Channel::getType() const {return _type;}
 std::string Channel::getTopic() const {return _topic;}
 std::string Channel::getPassword() const {return _password;}
 
@@ -21,7 +20,6 @@ int Channel::getNbClients() const {return _clients.size();}
 void Channel::setInviteOnly(bool inv) {_inviteOnly = inv;}
 void Channel::setName(std::string name) {_name = name;}
 void Channel::setTopic(std::string topic) {_topic = topic;}
-void Channel::setType(ChannelType type) {_type = type;}
 void Channel::setPassword(std::string password) {_password = password;}
 void Channel::addClient(Client *client) {_clients.push_back(client);}
 void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}

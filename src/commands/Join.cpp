@@ -6,7 +6,7 @@ void Server::handleJOIN(Client &client, Message message) {
 		return ;
 	}
 	if (!channelExist(message.parameters[0])) {
-		Channel *newChannel = new Channel(message.parameters[0], PUBLIC, &client);
+		Channel *newChannel = new Channel(message.parameters[0], &client);
 		_channels.push_back(newChannel);
 		_allChannels.push_back(newChannel);
 		std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + newChannel->getName() + CRLF;

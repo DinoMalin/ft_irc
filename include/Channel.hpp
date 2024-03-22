@@ -6,17 +6,10 @@
 
 class Client;
 
-enum ChannelType {
-    PUBLIC,
-    PRIVATE,
-    SECRET
-};
-
 class Channel {
 	private:
     	std::string _name;
         std::string _topic;
-		ChannelType _type;
         std::string _password;
         int _limitUsers;
         bool _limited;
@@ -27,12 +20,11 @@ class Channel {
         std::vector<Client*> _operators;
 
 	public:
-		Channel(std::string name, ChannelType type);
-        Channel(std::string name, ChannelType type, Client *op);
+		Channel(std::string name);
+        Channel(std::string name, Client *op);
         ~Channel();
 		std::string getName() const;
         std::string getTopic() const;
-        ChannelType getType() const;
         std::string getPassword() const;
         int getNbClients() const;
         int getLimitUsers() const;
@@ -40,7 +32,6 @@ class Channel {
         bool isLimited() const;
         void setName(std::string name);
         void setTopic(std::string topic);
-        void setType(ChannelType type);
         void setCanUseTopic(bool canUseTopic);
         void setPassword(std::string password);
         void setLimitUsers(int limitUsers);
