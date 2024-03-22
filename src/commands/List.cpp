@@ -2,7 +2,7 @@
 
 void Server::handleLIST(Client &client, Message message) {
 	(void) message;
-	std::string res = ":" + std::string(ADDRESS) + " 321 " + client.getNickname() + "Channel :Users  Name" + CRLF;
+	std::string res = ":" + std::string(ADDRESS) + " 321 " + client.getNickname() + " Channel :Users  Name" + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 
 	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {

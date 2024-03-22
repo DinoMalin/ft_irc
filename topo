@@ -1,76 +1,12 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    - part semble pas marcher : Peut renvoyer messages
-    - Il semble que lorsqu'on join un channel on n'est pas operator
-    - topic marche pas : Fait quitter le channel
-    - nick marche pas
+    - Il semble que lorsqu'on join un channel on n'est pas operator // Gwechen
+    - topic marche pas : Fait quitter le channel // Consequence de pb d'avant
+    - LIST : parcourt pas bien les channels
     
 A TESTER :
     - Invite
     - Kick
-    - List
     - Mode
 
-==87992== Invalid read of size 8
-==87992==    at 0x10C413: Channel::removeClient(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (Channel.cpp:32)
-==87992==    by 0x11E65A: Server::handlePART(Client&, Message) (Part.cpp:22)
-==87992==    by 0x10FA6B: Server::receiveMessage(int) (Server.cpp:97)
-==87992==    by 0x10FC8E: Server::run() (Server.cpp:121)
-==87992==    by 0x10BB05: main (main.cpp:11)
-==87992==  Address 0x4dc0258 is 0 bytes after a block of size 8 alloc'd
-==87992==    at 0x483BE63: operator new(unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==87992==    by 0x10DC37: __gnu_cxx::new_allocator<Client*>::allocate(unsigned long, void const*) (new_allocator.h:121)
-==87992==    by 0x10DA76: __gnu_cxx::__alloc_traits<std::allocator<Client*>, Client*>::allocate(std::allocator<Client*>&, unsigned long) (alloc_traits.h:133)
-==87992==    by 0x10D82F: std::_Vector_base<Client*, std::allocator<Client*> >::_M_allocate(unsigned long) (stl_vector.h:346)
-==87992==    by 0x117D84: std::_Vector_base<Client*, std::allocator<Client*> >::_M_create_storage(unsigned long) (stl_vector.h:361)
-==87992==    by 0x117C2E: std::_Vector_base<Client*, std::allocator<Client*> >::_Vector_base(unsigned long, std::allocator<Client*> const&) (stl_vector.h:305)
-==87992==    by 0x117B67: std::vector<Client*, std::allocator<Client*> >::vector(std::vector<Client*, std::allocator<Client*> > const&) (stl_vector.h:555)
-==87992==    by 0x117A25: Channel::Channel(Channel const&) (Channel.hpp:15)
-==87992==    by 0x11E42A: Server::handlePART(Client&, Message) (Part.cpp:15)
-==87992==    by 0x10FA6B: Server::receiveMessage(int) (Server.cpp:97)
-==87992==    by 0x10FC8E: Server::run() (Server.cpp:121)
-==87992==    by 0x10BB05: main (main.cpp:11)
-==87992== 
-==87992== Invalid read of size 8
-==87992==    at 0x49ACC38: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
-==87992==    by 0x10E2A9: Client::getNickname[abi:cxx11]() const (Client.cpp:12)
-==87992==    by 0x10C424: Channel::removeClient(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (Channel.cpp:32)
-==87992==    by 0x11E65A: Server::handlePART(Client&, Message) (Part.cpp:22)
-==87992==    by 0x10FA6B: Server::receiveMessage(int) (Server.cpp:97)
-==87992==    by 0x10FC8E: Server::run() (Server.cpp:121)
-==87992==    by 0x10BB05: main (main.cpp:11)
-==87992==  Address 0x30 is not stack'd, malloc'd or (recently) free'd
-==87992== 
-==87992== 
-==87992== Process terminating with default action of signal 11 (SIGSEGV)
-==87992==  Access not within mapped region at address 0x30
-==87992==    at 0x49ACC38: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
-==87992==    by 0x10E2A9: Client::getNickname[abi:cxx11]() const (Client.cpp:12)
-==87992==    by 0x10C424: Channel::removeClient(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (Channel.cpp:32)
-==87992==    by 0x11E65A: Server::handlePART(Client&, Message) (Part.cpp:22)
-==87992==    by 0x10FA6B: Server::receiveMessage(int) (Server.cpp:97)
-==87992==    by 0x10FC8E: Server::run() (Server.cpp:121)
-==87992==    by 0x10BB05: main (main.cpp:11)
-==87992==  If you believe this happened as a result of a stack
-==87992==  overflow in your program's main thread (unlikely but
-==87992==  possible), you can try to increase the size of the
-==87992==  main thread stack using the --main-stacksize= flag.
-==87992==  The main thread stack size used in this run was 8388608.
-==87992== 
-==87992== HEAP SUMMARY:
-==87992==     in use at exit: 1,493 bytes in 26 blocks
-==87992==   total heap usage: 150 allocs, 124 frees, 80,711 bytes allocated
-==87992== 
-==87992== LEAK SUMMARY:
-==87992==    definitely lost: 0 bytes in 0 blocks
-==87992==    indirectly lost: 0 bytes in 0 blocks
-==87992==      possibly lost: 0 bytes in 0 blocks
-==87992==    still reachable: 1,493 bytes in 26 blocks
-==87992==         suppressed: 0 bytes in 0 blocks
-==87992== Rerun with --leak-check=full to see details of leaked memory
-==87992== 
-==87992== Use --track-origins=yes to see where uninitialised values come from
-==87992== For lists of detected and suppressed errors, rerun with: -s
-==87992== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
-[1]    87992 segmentation fault (core dumped)  valgrind ./ircserv test 6667

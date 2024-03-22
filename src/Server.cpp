@@ -108,7 +108,7 @@ void Server::receiveMessage(int index) {
 				std::cout << "SENDING REPLY" << std::endl;
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
-			
+
 			_buffer.erase(0, pos + 2);
 			pos = _buffer.find("\r\n");
 		}

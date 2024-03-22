@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
 void Server::handleNICK(Client &client, Message message) {
-	std::string res;
-
 	if (message.parameters.size() == 0) {
 		sendError(431, client, message, "");
 		return ;
@@ -15,7 +13,7 @@ void Server::handleNICK(Client &client, Message message) {
 	}
 
 	if (client.getUsername().length()) {
-		std::string res1 = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + CRLF;
+		std::string res = ":" + std::string(ADDRESS) + " 001 " + newNick + CRLF;
 		send(client.getSocket(), res.c_str(), res.length(), 0);
 	}
 	client.setNickname(newNick);

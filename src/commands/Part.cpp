@@ -18,11 +18,11 @@ void Server::handlePART(Client &client, Message message) {
 		return ;
 	}
 
-	std::string sendToChannel = ":" + client.getNickname() + " PART " + message.parameters[0] + CRLF;
+	std::string sendToChannel = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
 	channel.removeClient(client.getNickname());
 	channel.sendChannel(sendToChannel, client, false);
 	
-	res = ":" + std::string(ADDRESS) + " PART " + message.parameters[0] + CRLF;
+	res = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 
 	if (channel.getNbClients() == 0) {
