@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, ChannelType type) : _name(name), _topic(""), _type(type), _password(""), _limited(false) {}
-Channel::Channel(std::string name, ChannelType type, Client *op) : _name(name), _topic(""), _type(type), _password(""), _limited(false) {
+Channel::Channel(std::string name, ChannelType type) : _name(name), _topic(""), _type(type), _password(""), _limited(false), _canUseTopic(true) {}
+Channel::Channel(std::string name, ChannelType type, Client *op) : _name(name), _topic(""), _type(type), _password(""), _limited(false), _canUseTopic(true) {
     _registered.push_back(op);
     _clients.push_back(op);
     _operators.push_back(op);
@@ -96,7 +96,7 @@ bool Channel::isOperator(std::string nickname) {
 
 void Channel::sendChannel(std::string message, Client author, bool skipAuthor) const {
     for (size_t i = 0; i < _clients.size(); i++)
-        if (skipAuthor && author.getNickname() != _clients[i]->getNickname())
+        if (!(skipAuthor && author.getNickname() == _clients[i]->getNickname()))
             send(_clients[i]->getSocket(), message.c_str(), message.length(), 0);
 }
 

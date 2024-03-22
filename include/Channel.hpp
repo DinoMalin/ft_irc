@@ -19,9 +19,9 @@ class Channel {
 		ChannelType _type;
         std::string _password;
         int _limitUsers;
-        bool _canUseTopic;
         bool _limited;
         bool _inviteOnly;
+        bool _canUseTopic;
 		std::vector<Client*> _clients;
         std::vector<Client*> _registered;
         std::vector<Client*> _operators;
