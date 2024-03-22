@@ -25,6 +25,20 @@ void Channel::addClient(Client *client) {_clients.push_back(client);}
 void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}
 void Channel::setLimited(bool limited) {_limited = limited;}
 
+std::string Channel::getUserList() {
+    std::string result("");
+
+    for (size_t i = 0; i < _clients.size(); i++) {
+        if (isOperator(_clients[i]->getNickname()))
+            result += "@";
+        result += _clients[i]->getNickname();
+        if (i != _clients.size() - 1)
+            result += " ";
+    }
+
+    return result;
+}
+
 void Channel::removeClient(std::string nickname) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end();) {
         if ((*it)->getNickname() == nickname) {

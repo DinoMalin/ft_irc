@@ -26,6 +26,7 @@ class Channel {
 		std::string getName() const;
         std::string getTopic() const;
         std::string getPassword() const;
+        std::string getUserList();
         int getNbClients() const;
         int getLimitUsers() const;
         bool getCanUseTopic() const;
