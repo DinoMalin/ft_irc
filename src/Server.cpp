@@ -57,23 +57,12 @@ Server::~Server() {
 
 void Server::treatNewConnexion() {
 	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
-	bool isSet = false;
 	if (_clients[_numClients - 1].getSocket() < 0) {
 		perror("Error in accept");
 	} else {
 		std::cout << "New connection accepted" << std::endl;
-		for (int i = 1; i < _numClients; i++) {
-			if (_fds[i].fd == -1)
-			{
-				isSet = true;
-				_fds[i].fd = _clients[_numClients - 1].getSocket();
-				_fds[i].events = POLLIN;
-			}
-		}
-		if (!isSet) {	
-			_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
-			_fds[_numClients].events = POLLIN;
-		}
+		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
+		_fds[_numClients].events = POLLIN;
 		++_numClients;
 	}
 }
