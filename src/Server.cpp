@@ -113,9 +113,8 @@ void Server::run() {
 
 		for (int i = 0; i < _numClients; ++i) {
 			if (_fds[i].revents & POLLIN) {
-				if (i == 0) {
+				if (i == 0)
 					treatNewConnexion();
-				}
 				else
 					receiveMessage(i);
 			}

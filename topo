@@ -1,11 +1,10 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    - Il semble que lorsqu'on join un channel on n'est pas operator // Gwechen
     - topic marche pas : Fait quitter le channel // Consequence de pb d'avant
-    - LIST : parcourt pas bien les channels
+    - quand user se reconnecte le laisser garder le meme pseudo 
     
 A TESTER :
-    - Invite
-    - Kick
-    - Mode
+    - Invite //duo
+    - Kick // duo
+    - Mode // duo

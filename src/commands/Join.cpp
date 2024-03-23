@@ -10,7 +10,7 @@ void Server::handleJOIN(Client &client, Message message) {
 		_channels.push_back(newChannel);
 		_allChannels.push_back(newChannel);
 		std::string res1 = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + newChannel->getName() + CRLF;
-		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + client.getNickname() + CRLF;
+		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
 		std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
 		send(client.getSocket(), res1.c_str(), res1.length(), 0);
 		send(client.getSocket(), res2.c_str(), res2.length(), 0);

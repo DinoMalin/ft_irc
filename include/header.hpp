@@ -15,7 +15,6 @@
 #include <sstream>
 #include <vector>
 
-#define PORT 6667
 #define MAX_CLIENTS 10
 #define BUFFER_SIZE 1024
 
