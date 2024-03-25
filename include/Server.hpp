@@ -35,6 +35,7 @@ class Server {
         void handlePING(Client &client, Message message);
 
         // == Client command == //
+        void handleCAP(Client &client, Message message);
         void handlePASS(Client &client, Message message);
         void handleNICK(Client &client, Message message);
         void handleUSER(Client &client, Message message);

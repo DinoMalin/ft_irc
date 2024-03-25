@@ -92,3 +92,6 @@ std::string toString(int nb) {
 	ss << nb;
 	return ss.str();
 }
+
+// :server 482 jcario #salut :You do not have access to change the topic on this channel
+// :irc.example.com 482 jcario #dnomalin :You're not channel operator

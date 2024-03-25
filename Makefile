@@ -10,7 +10,7 @@ SRC_DIR = src/
 BONUS_DIR = bonus/
 
 FILES = main Channel Client Server utils \
-		commands/Invite commands/Join commands/Kick commands/List commands/Mode \
+		commands/Cap commands/Invite commands/Join commands/Kick commands/List commands/Mode \
 		commands/Nick commands/Part commands/Pass commands/Ping commands/Privmsg \
 		commands/Topic commands/User
 BONUS_FILES = feurbot

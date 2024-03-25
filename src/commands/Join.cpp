@@ -17,7 +17,7 @@ void Server::handleJOIN(Client &client, Message message) {
 		send(client.getSocket(), res3.c_str(), res3.length(), 0);
 	}
 	else {
-		Channel channel = getChannel(message.parameters[0]);
+		Channel &channel = getChannel(message.parameters[0]);
 		if (channel.getPassword().length() && message.parameters.size() < 2 && !channel.isRegistered(client.getNickname())) {
 			sendError(475, client, message, message.parameters[0]);
 			return ;
