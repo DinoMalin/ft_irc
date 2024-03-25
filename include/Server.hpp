@@ -19,7 +19,6 @@ class Server {
 
         std::map<std::string, Funcs> _stringToFunc;
 
-
 	    struct pollfd _fds[MAX_CLIENTS + 1];
 	    int _numClients;
         std::vector<Channel*> _channels;
@@ -28,6 +27,7 @@ class Server {
         void treatNewConnexion();
         void receiveMessage(int index);
         bool commandsIsImplemented(std::string str);
+        void eraseClient(int index);
 
         // ===== Command Handlers ===== //
 
@@ -39,6 +39,7 @@ class Server {
         void handlePASS(Client &client, Message message);
         void handleNICK(Client &client, Message message);
         void handleUSER(Client &client, Message message);
+        void handleQUIT(Client &client, Message message);
 
         // == Channel command == //
         void handlePRIVMSG(Client &client, Message message);

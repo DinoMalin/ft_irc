@@ -2,7 +2,7 @@
 
 Client::Client() {}
 
-Client::Client(int socket) : _socket(socket), _registered(false), _triedToRegister(false) {}
+Client::Client(int socket) : _socket(socket), _registered(false), _triedToRegister(false), _quitting(false) {}
 
 Client::~Client() {}
 
@@ -14,6 +14,7 @@ std::string Client::getNickname() const {return _nickname;}
 std::string Client::getPassword() const {return _password;}
 std::string Client::getHostname() const {return _hostname;}
 std::string Client::getSource() const {return _source;}
+bool Client::isQuitting() const {return _quitting;}
 
 void Client::setUsername(std::string username) {_username = username;}
 void Client::setNickname(std::string nickname) {_nickname = nickname;}
@@ -22,12 +23,16 @@ void Client::setRegistered() {_registered = true;}
 void Client::setHostname(std::string hostname) {_hostname = hostname;}
 void Client::setSource(std::string source) {_source = source;}
 void Client::tryToRegister() {_triedToRegister = true;}
+void Client::quitting() {_quitting = true;}
 
 Client& Client::operator=(const Client& src) {
     _socket = src.getSocket();
     _username = src.getUsername();
     _nickname = src.getNickname();
     _password = src.getPassword();
+    _triedToRegister = src._triedToRegister;
+    _registered = src._registered;
+    _quitting = src._quitting;
     return *this;
 }
 

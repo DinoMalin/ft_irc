@@ -17,6 +17,7 @@ class Client {
 
 		bool _registered;
 		bool _triedToRegister;
+		bool _quitting;
 	public:
 		Client();
 		Client(int socket);
@@ -27,8 +28,10 @@ class Client {
 		std::string getPassword() const;
 		std::string getHostname() const;
 		std::string getSource() const;
+		bool isQuitting() const;
 		bool getRegistered() const;
 		bool triedToRegister() const;
+		void quitting();
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setPassword(std::string password);

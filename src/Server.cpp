@@ -14,12 +14,13 @@ Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientA
 	_stringToFunc["INVITE"] = &Server::handleINVITE;
 	_stringToFunc["TOPIC"] = &Server::handleTOPIC;
 	_stringToFunc["MODE"] = &Server::handleMODE;
+	_stringToFunc["QUIT"] = &Server::handleQUIT;
 
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
 	if (_socket < 0) {
-		perror("Error in socket creacacation");
+		perror("Error in socket creation");
 		exit(EXIT_FAILURE);
 	}
 
@@ -77,16 +78,11 @@ void Server::receiveMessage(int index) {
 	}
 
 	if (bytesRead == 0) {
-		std::cout << "Client disconnected" << std::endl;
-		close(_fds[index].fd);
-		for (int j = index; j < _numClients - 1; ++j) {
-			_fds[j] = _fds[j + 1];
-		}
-		--_numClients;
+		eraseClient(index);
 	} else if (bytesRead > 0) {
 		std::cout << "index " << index << std::endl;
 		_buffer += std::string(buff, bytesRead);
-		std::cout << _buffer << "|" << buff << std::endl;
+		std::cout << _buffer << std::endl;
 	
 		size_t pos = _buffer.find("\r\n");
 		while (pos != std::string::npos) {
@@ -97,10 +93,13 @@ void Server::receiveMessage(int index) {
 				std::cout << "SENDING REPLY" << std::endl;
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
-
 			_buffer.erase(0, pos + 2);
 			pos = _buffer.find("\r\n");
 		}
+	}
+
+	if (_clients[index - 1].isQuitting()) {
+		eraseClient(index);
 	}
 }
 
@@ -161,4 +160,15 @@ bool Server::commandsIsImplemented(std::string str) {
 			return true;
 	}
 	return false;
+}
+
+void Server::eraseClient(int index) {
+	std::cout << "Client disconnected" << std::endl;
+	close(_fds[index].fd);
+	_clients[index - 1].clear();
+	for (int j = index; j < _numClients - 1; ++j) {
+		_fds[j] = _fds[j + 1];
+		_clients[j - 1] = _clients[j];
+	}
+	--_numClients;
 }

@@ -1,10 +1,8 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    - topic marche pas : Fait quitter le channel // Consequence de pb d'avant
-    - quand user se reconnecte le laisser garder le meme pseudo 
+    - quand user se reconnecte le laisser garder le meme pseudo
     
 A TESTER :
     - Invite //duo
-    - Kick // duo
     - Mode // duo

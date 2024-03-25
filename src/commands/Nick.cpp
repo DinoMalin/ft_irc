@@ -1,6 +1,8 @@
 #include "Server.hpp"
 
 void Server::handleNICK(Client &client, Message message) {
+	if (client.getNickname() == message.parameters[0])
+		return ;
 	if (message.parameters.size() == 0) {
 		sendError(431, client, message, "");
 		return ;
