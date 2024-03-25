@@ -1,8 +1,8 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    - quand user se reconnecte le laisser garder le meme pseudo
-    
+    -Tenter de corriger topic
+
 A TESTER :
     - Invite //duo
     - Mode // duo

@@ -17,7 +17,7 @@ void Server::handleMODE(Client &client, Message message) {
 		return ;
 	}
 
-	for (size_t i = 0; i < message.parameters[1].length(); i++) {
+	for (size_t i = 1; i < message.parameters[1].length(); i++) {
 		if (std::string("itkol").find(message.parameters[1][i]) == std::string::npos) {
 			sendError(472, client, message, std::string() + message.parameters[1][1]);
 			return ;
@@ -35,7 +35,7 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	char operation = message.parameters[1][0];
-	bool flag[127] = {false};
+	bool flag[127] = {};
 
 	for (size_t  i = 1; i < message.parameters[1].length(); i++)
 		flag[int(message.parameters[1][i])] = true;
@@ -94,6 +94,6 @@ void Server::handleMODE(Client &client, Message message) {
 			channel.setLimited(false);
 	}
 
-	std::string res = ":" + std::string(ADDRESS) + " 324 " + client.getNickname() + " " + channel.getName() + " " + message.parameters[2] + CRLF;
+	std::string res = ":" + std::string(ADDRESS) + " 324 " + client.getNickname() + " " + channel.getName() + " " + message.parameters[1] + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), 0);
 }
