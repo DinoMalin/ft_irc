@@ -36,13 +36,12 @@ void Server::handleJOIN(Client &client, Message message) {
 		}
 		channel.addClient(&client);
 		channel.addRegistered(&client);
-		std::string res1 = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
+		// std::string res1 = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
 		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + channel.getName() + " :" + channel.getUserList() + CRLF;
 		std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + channel.getName() + " :End of /NAMES list" + CRLF;
 		std::string broadcast = ":" + client.getSource() + " JOIN :" + channel.getName() + CRLF;
-		send(client.getSocket(), res1.c_str(), res1.length(), 0);
+		channel.sendChannel(broadcast, client, false);
 		send(client.getSocket(), res2.c_str(), res2.length(), 0);
 		send(client.getSocket(), res3.c_str(), res3.length(), 0);
-		channel.sendChannel(broadcast, client, true);
 	}
 }

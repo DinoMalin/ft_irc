@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true) {}
-Channel::Channel(std::string name, Client *op) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true) {
+Channel::Channel(std::string name) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true), _inviteOnly(false) {}
+Channel::Channel(std::string name, Client *op) : _name(name), _topic(""), _password(""), _limited(false), _canUseTopic(true), _inviteOnly(false) {
     _registered.push_back(op);
     _clients.push_back(op);
     _operators.push_back(op);

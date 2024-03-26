@@ -89,7 +89,7 @@ void Server::receiveMessage(int index) {
 			std::string line = _buffer.substr(0, pos);
 			Message res = getParsedCommand(line);
 			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered()
-				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING"))) {
+				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING" || res.command == "CAP"))) {
 				std::cout << "SENDING REPLY" << std::endl;
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}

@@ -1,6 +1,9 @@
 #include "Server.hpp"
 
 void Server::handleMODE(Client &client, Message message) {
+	if (channelExist(message.parameters[0]) && message.parameters.size() == 1)
+		return ;
+
 	if (message.parameters.size() < 2) {
 		sendError(461, client, message, "");
 		return ;
