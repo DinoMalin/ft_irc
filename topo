@@ -1,4 +1,2 @@
 nc -lk localhost ircd
 
-A CORRIGER :
-    - Close fd quand erreur en exit

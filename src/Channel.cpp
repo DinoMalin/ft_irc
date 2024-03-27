@@ -109,7 +109,6 @@ bool Channel::isOperator(std::string nickname) {
 void Channel::sendChannel(std::string message, Client author, bool skipAuthor) const {
     for (size_t i = 0; i < _clients.size(); i++)
         if (!(skipAuthor && author.getNickname() == _clients[i]->getNickname())) {
-            std::cout << _clients[i]->getNickname();
             send(_clients[i]->getSocket(), message.c_str(), message.length(), 0);
         }
 }
