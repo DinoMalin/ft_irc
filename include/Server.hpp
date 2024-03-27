@@ -12,7 +12,6 @@ class Server {
         int _socket;
         std::string _password;
         Client _clients[MAX_CLIENTS];
-        std::vector<Client*> _allClients;
         std::vector<Channel*> _allChannels;
 	    struct sockaddr_in _serverAddr;
         struct sockaddr_in _clientAddr;
@@ -27,7 +26,8 @@ class Server {
         void treatNewConnexion();
         void receiveMessage(int index);
         bool commandsIsImplemented(std::string str);
-        void eraseClient(int index);
+        void disconnectClient(int index);
+        void disconnectEveryone();
 
         // ===== Command Handlers ===== //
 

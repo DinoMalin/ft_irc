@@ -111,7 +111,6 @@ void Channel::sendChannel(std::string message, Client author, bool skipAuthor) c
         if (!(skipAuthor && author.getNickname() == _clients[i]->getNickname())) {
             std::cout << _clients[i]->getNickname();
             send(_clients[i]->getSocket(), message.c_str(), message.length(), 0);
-            std::cout << " | SENDING" << std::endl;
         }
 }
 

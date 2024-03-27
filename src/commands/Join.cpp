@@ -36,7 +36,6 @@ void Server::handleJOIN(Client &client, Message message) {
 		}
 		channel.addClient(&client);
 		channel.addRegistered(&client);
-		// std::string res1 = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :" + channel.getTopic() + CRLF;
 		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + channel.getName() + " :" + channel.getUserList() + CRLF;
 		std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + channel.getName() + " :End of /NAMES list" + CRLF;
 		std::string broadcast = ":" + client.getSource() + " JOIN :" + channel.getName() + CRLF;

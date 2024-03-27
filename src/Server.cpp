@@ -48,16 +48,7 @@ Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientA
 	}
 }
 
-Server::~Server() {
-	// for (std::vector<Client *>::iterator it = _allClients.begin(); it != _allClients.end(); ++it) {
-	//         delete *it;
-	//         _allClients.erase(it);
-	// }
-	for (std::vector<Channel *>::iterator it = _allChannels.begin(); it != _allChannels.end(); ++it) {
-		delete *it;
-		// _allChannels.erase(it);
-	}
-}
+Server::~Server() {disconnectEveryone();}
 
 void Server::treatNewConnexion() {
 	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
@@ -78,11 +69,10 @@ void Server::receiveMessage(int index) {
 	if (bytesRead < 0) {
 		std::cout << "Error in recv" << std::endl;
 	}
-
 	if (bytesRead == 0) {
-		eraseClient(index);
+		disconnectClient(index);
 	} else if (bytesRead > 0) {
-		std::cout << "index " << index << std::endl;
+		std::cout << "Client no." << index << std::endl;
 		_buffer += std::string(buff, bytesRead);
 		std::cout << _buffer << std::endl;
 	
@@ -92,7 +82,6 @@ void Server::receiveMessage(int index) {
 			Message res = getParsedCommand(line);
 			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered()
 				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING" || res.command == "CAP"))) {
-				std::cout << "SENDING REPLY" << std::endl;
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
 			_buffer.erase(0, pos + 2);
@@ -101,7 +90,7 @@ void Server::receiveMessage(int index) {
 	}
 
 	if (_clients[index - 1].isQuitting()) {
-		eraseClient(index);
+		disconnectClient(index);
 	}
 }
 
@@ -110,6 +99,7 @@ void Server::run() {
 		if (poll(_fds, _numClients, -1) == -1) {
 			std::cout << "Error in poll" << std::endl;
 			close(_socket);
+			disconnectEveryone();
 			exit(EXIT_FAILURE);
 		}
 
@@ -165,13 +155,22 @@ bool Server::commandsIsImplemented(std::string str) {
 	return false;
 }
 
-void Server::eraseClient(int index) {
+void Server::disconnectClient(int index) {
 	std::cout << "Client disconnected" << std::endl;
 	close(_fds[index].fd);
 	_clients[index - 1].clear();
-	for (int j = index; j < _numClients - 1; ++j) {
-		_fds[j] = _fds[j + 1];
-		_clients[j - 1] = _clients[j];
+	for (int i = index; i < _numClients - 1; ++i) {
+		_fds[i] = _fds[i + 1];
+		_clients[i - 1] = _clients[i];
 	}
 	--_numClients;
+}
+
+void Server::disconnectEveryone() {
+	for (int i = 0; i < _numClients; i++) {
+		disconnectClient(i);
+	}
+	for (std::vector<Channel *>::iterator it = _allChannels.begin(); it != _allChannels.end(); ++it) {
+		delete *it;
+	}
 }
