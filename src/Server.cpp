@@ -20,13 +20,14 @@ Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientA
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
 	if (_socket < 0) {
-		perror("Error in socket creation");
+		std::cout << "Error in socket creation" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	int opt = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-		perror("Error in setsockopt");
+		std::cout << "Error in setsockopt" << std::endl;
+		close(_socket);
 		exit(EXIT_FAILURE);
 	}
 
@@ -35,12 +36,14 @@ Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientA
 	_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	_serverAddr.sin_port = htons(port);
 	if (bind(_socket, (struct sockaddr*)&_serverAddr, sizeof(_serverAddr)) < 0) {
-		perror("Error in bind");
+		std::cout << "Error in bind" << std::endl;
+		close(_socket);
 		exit(EXIT_FAILURE);
 	}
 
 	if (listen(_socket, MAX_CLIENTS) < 0) {
-		perror("Error in listen");
+		std::cout << "Error in listen" << std::endl;
+		close(_socket);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -59,7 +62,7 @@ Server::~Server() {
 void Server::treatNewConnexion() {
 	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
 	if (_clients[_numClients - 1].getSocket() < 0) {
-		perror("Error in accept");
+		std::cout << "Error in accept" << std::endl;
 	} else {
 		std::cout << "New connection accepted" << std::endl;
 		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
@@ -73,8 +76,7 @@ void Server::receiveMessage(int index) {
 	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
 
 	if (bytesRead < 0) {
-		perror("Error in recv");
-		exit(EXIT_FAILURE);
+		std::cout << "Error in recv" << std::endl;
 	}
 
 	if (bytesRead == 0) {
@@ -106,7 +108,8 @@ void Server::receiveMessage(int index) {
 void Server::run() {
 	while (true) {
 		if (poll(_fds, _numClients, -1) == -1) {
-			perror("Error in poll");
+			std::cout << "Error in poll" << std::endl;
+			close(_socket);
 			exit(EXIT_FAILURE);
 		}
 

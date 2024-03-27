@@ -27,7 +27,7 @@ void Server::handleMODE(Client &client, Message message) {
 		}
 	}
 
-	Channel channel = getChannel(message.parameters[0]);
+	Channel &channel = getChannel(message.parameters[0]);
 	if (!channel.isInChannel(client.getNickname())) {
 		sendError(442, client, message, channel.getName());
 		return ;

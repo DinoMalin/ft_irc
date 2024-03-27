@@ -15,7 +15,7 @@
 #include <sstream>
 #include <vector>
 
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 200
 #define BUFFER_SIZE 1024
 
 #define CRLF "\r\n"
