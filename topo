@@ -1,9 +1,17 @@
 nc -lk localhost ircd
 
 A CORRIGER :
-    - Quand un utilisateur se nick, il faut qu'il reste operator
     - Close fd quand erreur en exit
 
+
+MODES :
+    i : nickel
+    t : nickel
+    k : A tester
+    o : nickel
+    l : A tester
+
+
 A TESTER :
-    - Invite //duo
-    - Mode // duo
+    - Mot de passe channel
+    - Limite channel

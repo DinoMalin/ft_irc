@@ -24,10 +24,8 @@ void Server::handleTOPIC(Client &client, Message message) {
 			std::cout << "ACCESS" << std::endl;
 			channel.sendChannel(res, client, false);
 		} else {
-			// std::string res = ":" + std::string(ADDRESS) + " PRIVMSG " + channel.getName() + " You're not a channel operator" + CRLF;
-			// send(client.getSocket(), res.c_str(), res.length(), 0);
-			// std::cout << "ERROR" << std::endl;
-			sendError(482, client, message, message.parameters[0]);
+			if (channel.getCanUseTopic())
+				sendError(482, client, message, message.parameters[0]);
 		}
 	} else {
 		if (channel.getTopic() != "") {
