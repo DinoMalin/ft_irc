@@ -41,3 +41,4 @@ struct Message {
 Message getParsedCommand(std::string str);
 void sendError(int code, Client client, Message message, std::string opt);
 std::string toString(int nb);
+std::vector<std::string> split(std::string str, char delimiter);

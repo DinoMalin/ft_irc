@@ -1,14 +1,18 @@
 #include "header.hpp"
 #include "Client.hpp"
 
+std::vector<std::string> split(std::string str, char delimiter) {
+	std::vector<std::string> result;
+	std::stringstream ss(str);
+	std::string element;
+	while (std::getline(ss, element, delimiter)) {
+		result.push_back(element);
+	}
+	return result;
+}
+
 Message getParsedCommand(std::string str) {
 	Message result;
-
-	// if (str.substr(str.length() - 2) != CRLF)
-	// 	result.errorCode = 421;
-	// else {
-	// 	str.erase(str.length() - 2, str.length() - 1);
-	// }
 
 	if (str.length() > 512 && result.errorCode != 421) {
 		str.erase(510, str.length() - 1);

@@ -71,25 +71,18 @@ void Server::handleMODE(Client &client, Message message) {
 		else
 			channel.setCanUseTopic(false);
 	} else if (flag['k']) {
-		if (operation == '+') {
-			if (channel.getPassword().length()) {
-				sendError(467, client, message, channel.getName());
-				return ;
-			} else
-				channel.setPassword(message.parameters[1 + flag['k']]);
-		} else
+		if (operation == '+')
+			channel.setPassword(message.parameters[1 + flag['k']]);
+		else
 			channel.setPassword("");
 	} else if (flag['o']) {
-			if (operation == '+') {
-				channel.addOperator(&getClient(message.parameters[1 + flag['o']]));
-			}
-			else
-				channel.removeOperator(getClient(message.parameters[1 + flag['o']]).getNickname());
+		if (operation == '+')
+			channel.addOperator(&getClient(message.parameters[1 + flag['o']]));
+		else
+			channel.removeOperator(getClient(message.parameters[1 + flag['o']]).getNickname());
 	} else if (flag['l']) {  
-		if (operation == '+') {
-			channel.setLimited(true);
+		if (operation == '+')
 			channel.setLimitUsers(std::atoi(message.parameters[1 + flag['l']].c_str()));
-		}
 		else
 			channel.setLimited(false);
 	}

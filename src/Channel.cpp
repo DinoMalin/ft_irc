@@ -22,7 +22,7 @@ void Channel::setName(std::string name) {_name = name;}
 void Channel::setTopic(std::string topic) {_topic = topic;}
 void Channel::setPassword(std::string password) {_password = password;}
 void Channel::addClient(Client *client) {_clients.push_back(client);}
-void Channel::setLimitUsers(int limitUsers) {_limitUsers = limitUsers;}
+void Channel::setLimitUsers(int limitUsers) {_limited = true; _limitUsers = limitUsers;}
 void Channel::setLimited(bool limited) {_limited = limited;}
 
 std::string Channel::getUserList() {
