@@ -64,6 +64,8 @@ void sendError(int code, Client client, Message message, std::string opt) {
 		res = ":" + std::string(ADDRESS) + " 412 " + client.getNickname() + " ::No text to send" + CRLF;
 	else if (code == 431)
 		res = ":" + std::string(ADDRESS) + " 431 " + client.getNickname() + " :No nickname given" + CRLF;
+	else if (code == 432)
+		res = ":" + std::string(ADDRESS) + " 432 " + client.getNickname() + " " + opt + " :Erroneus nickname" + CRLF;
 	else if (code == 433)
 		res = ":" + std::string(ADDRESS) + " 433 " + client.getNickname() + " " + opt + " :Nickname is already in use" + CRLF;
 	else if (code == 442)
@@ -96,6 +98,3 @@ std::string toString(int nb) {
 	ss << nb;
 	return ss.str();
 }
-
-// :server 482 jcario #salut :You do not have access to change the topic on this channel
-// :irc.example.com 482 jcario #dnomalin :You're not channel operator

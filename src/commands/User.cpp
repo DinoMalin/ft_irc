@@ -14,7 +14,6 @@ void Server::handleUSER(Client &client, Message message) {
 
 	client.setUsername(message.parameters[0]);
 	client.setHostname(message.parameters[1]);
-	client.setSource(client.getNickname() + "!" + client.getUsername() + "@" + client.getIp());
 	std::string res1 = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + " :Welcome to the Internet Relay Network, " + client.getSource() + CRLF;
 	std::string res2 = ":" + std::string(ADDRESS) + " 002 " + client.getNickname() + " :Your host is " + client.getSource() + ", running version 0.29.22" + CRLF;
 	std::string res3 = ":" + std::string(ADDRESS) + " 003 " + client.getNickname() + " :This server was created on 20th January 2004" + CRLF;

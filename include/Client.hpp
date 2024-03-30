@@ -12,7 +12,6 @@ class Client {
 		std::string _nickname;
 		std::string _password;
 		std::string _hostname;
-		std::string _source;
 		Channel *_channel;
 		std::string _ip;
 
@@ -40,7 +39,6 @@ class Client {
 		void setNickname(std::string nickname);
 		void setPassword(std::string password);
 		void setHostname(std::string hostname);
-		void setSource(std::string source);
 		void tryToRegister();
 		void setRegistered();
 		void setIp(std::string ip);
