@@ -16,7 +16,7 @@
 #include <vector>
 
 #define MAX_CLIENTS 200
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 513
 
 #define CRLF "\r\n"
 #define ADDRESS "irc.example.com"

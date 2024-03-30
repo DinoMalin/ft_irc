@@ -19,6 +19,8 @@ class Client {
 		bool _triedToRegister;
 		bool _quitting;
 	public:
+		std::string		_buffer;
+
 		Client();
 		Client(int socket);
 		~Client();

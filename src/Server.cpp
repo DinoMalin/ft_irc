@@ -73,19 +73,19 @@ void Server::receiveMessage(int index) {
 		disconnectClient(index);
 	} else if (bytesRead > 0) {
 		std::cout << "Client no." << index << std::endl;
-		_buffer += std::string(buff, bytesRead);
-		std::cout << _buffer << std::endl;
+		_clients[index - 1]._buffer += std::string(buff, bytesRead);
+		std::cout << _clients[index - 1]._buffer << std::endl;
 	
-		size_t pos = _buffer.find("\r\n");
+		size_t pos = _clients[index - 1]._buffer.find("\r\n");
 		while (pos != std::string::npos) {
-			std::string line = _buffer.substr(0, pos);
+			std::string line = _clients[index - 1]._buffer.substr(0, pos);
 			Message res = getParsedCommand(line);
 			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered()
 				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING" || res.command == "CAP"))) {
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			}
-			_buffer.erase(0, pos + 2);
-			pos = _buffer.find("\r\n");
+			_clients[index - 1]._buffer.erase(0, pos + 2);
+			pos = _clients[index - 1]._buffer.find("\r\n");
 		}
 	}
 
