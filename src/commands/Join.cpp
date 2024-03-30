@@ -34,7 +34,7 @@ void Server::handleJOIN(Client &client, Message message) {
 				sendError(473, client, message, channelNames[i]);
 				return ;
 			}
-			if (channel.isLimited() && channel.getLimitUsers() >= channel.getNbClients()) {
+			if (channel.isLimited() && channel.getLimitUsers() <= channel.getNbClients()) {
 				sendError(471, client, message, channelNames[i]);
 				return ;
 			}

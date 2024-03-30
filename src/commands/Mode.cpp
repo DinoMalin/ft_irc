@@ -38,10 +38,11 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	char operation = message.parameters[1][0];
-	bool flag[127] = {};
+	int flag[127] = {};
 
-	for (size_t  i = 1; i < message.parameters[1].length(); i++)
+	for (size_t  i = 1; i < message.parameters[1].length(); i++) {
 		flag[int(message.parameters[1][i])] = i;
+	}
 
 	if (operation != '+' && operation != '-') {
 		sendError(472, client, message, std::string() + message.parameters[1][1]);
@@ -65,24 +66,31 @@ void Server::handleMODE(Client &client, Message message) {
 			channel.setInviteOnly(true);
 		else
 			channel.setInviteOnly(false);
-	} else if (flag['t']) {
+	}
+	if (flag['t']) {
 		if (operation == '+')
 			channel.setCanUseTopic(true);
 		else
 			channel.setCanUseTopic(false);
-	} else if (flag['k']) {
+	}
+	if (flag['k']) {
 		if (operation == '+')
 			channel.setPassword(message.parameters[1 + flag['k']]);
 		else
 			channel.setPassword("");
-	} else if (flag['o']) {
+	}
+	if (flag['o']) {
 		if (operation == '+')
 			channel.addOperator(&getClient(message.parameters[1 + flag['o']]));
 		else
 			channel.removeOperator(getClient(message.parameters[1 + flag['o']]).getNickname());
-	} else if (flag['l']) {  
-		if (operation == '+')
+	}
+	if (flag['l']) {  
+		if (operation == '+') {
 			channel.setLimitUsers(std::atoi(message.parameters[1 + flag['l']].c_str()));
+			std::cout << 1 + flag['l'] << std::endl;
+			std::cout << channel.getLimitUsers() << std::endl;
+		}
 		else
 			channel.setLimited(false);
 	}
