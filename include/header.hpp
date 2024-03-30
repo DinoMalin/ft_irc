@@ -19,7 +19,7 @@
 #define BUFFER_SIZE 513
 
 #define CRLF "\r\n"
-#define ADDRESS "irc.example.com"
+#define ADDRESS "BreizhRC"
 
 class Client;
 

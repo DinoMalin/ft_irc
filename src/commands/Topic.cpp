@@ -19,7 +19,7 @@ void Server::handleTOPIC(Client &client, Message message) {
 	if (message.parameters.size() == 2) {
 		if (channel.isOperator(client.getNickname()) && channel.getCanUseTopic()) {
 			channel.setTopic(message.parameters[1]);
-			std::string res = ":" + std::string(ADDRESS) + " TOPIC " + message.parameters[0] + " :"
+			std::string res = ":" + client.getSource() + " TOPIC " + message.parameters[0] + " :"
 				+ message.parameters[1] + CRLF;
 			channel.sendChannel(res, client, false);
 		} else {
