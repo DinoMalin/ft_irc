@@ -9,9 +9,8 @@ void Server::handleNICK(Client &client, Message message) {
 	}
 
 	std::string newNick(message.parameters[0]);
-	if (clientExist(newNick)) {
-		sendError(433, client, message, newNick);
-		return ;
+	while (clientExist(newNick)) {
+		newNick += '_';
 	}
 
 	if (client.getUsername().length()) {
