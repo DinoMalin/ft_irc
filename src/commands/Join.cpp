@@ -9,10 +9,10 @@ void Server::handleJOIN(Client &client, Message message) {
 		Channel *newChannel = new Channel(message.parameters[0], &client);
 		_channels.push_back(newChannel);
 		_allChannels.push_back(newChannel);
-		std::string res1 = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + newChannel->getName() + CRLF;
+		std::string broadcast = ":" + client.getSource() + " JOIN :" + newChannel->getName() + CRLF;
 		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
 		std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
-		send(client.getSocket(), res1.c_str(), res1.length(), 0);
+		newChannel->sendChannel(broadcast, client, false);
 		send(client.getSocket(), res2.c_str(), res2.length(), 0);
 		send(client.getSocket(), res3.c_str(), res3.length(), 0);
 	}
@@ -36,9 +36,9 @@ void Server::handleJOIN(Client &client, Message message) {
 		}
 		channel.addClient(&client);
 		channel.addRegistered(&client);
+		std::string broadcast = ":" + client.getSource() + " JOIN :" + channel.getName() + CRLF;
 		std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + channel.getName() + " :" + channel.getUserList() + CRLF;
 		std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + channel.getName() + " :End of /NAMES list" + CRLF;
-		std::string broadcast = ":" + client.getSource() + " JOIN :" + channel.getName() + CRLF;
 		channel.sendChannel(broadcast, client, false);
 		send(client.getSocket(), res2.c_str(), res2.length(), 0);
 		send(client.getSocket(), res3.c_str(), res3.length(), 0);

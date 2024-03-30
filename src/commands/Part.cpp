@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
 void Server::handlePART(Client &client, Message message) {
-	std::string res;
-
 	if (message.parameters.size() < 1) {
 		sendError(461, client, message, "");
 		return ;
@@ -18,12 +16,9 @@ void Server::handlePART(Client &client, Message message) {
 		return ;
 	}
 
-	std::string sendToChannel = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
+	std::string res = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
+	channel.sendChannel(res, client, false);
 	channel.removeClient(client.getNickname());
-	channel.sendChannel(sendToChannel, client, false);
-	
-	res = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
 
 	if (channel.getNbClients() == 0) {
 		for (size_t i = 0; i < _channels.size(); i++) {
