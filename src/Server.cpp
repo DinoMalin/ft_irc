@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(std::string password, int port) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
+Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
 	_stringToFunc["CAP"] = &Server::handleCAP;
 	_stringToFunc["PING"] = &Server::handlePING;
 	_stringToFunc["PASS"] = &Server::handlePASS;

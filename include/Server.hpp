@@ -60,6 +60,6 @@ class Server {
         void reply(Client &client, Message message);
     public:
         ~Server();
-        Server(std::string password, int port);
+        Server(int port, std::string password);
         void run();
 };
