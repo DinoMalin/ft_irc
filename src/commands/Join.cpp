@@ -5,6 +5,10 @@ void Server::handleJOIN(Client &client, Message message) {
 		sendError(461, client, message, "");
 		return ;
 	}
+	if (message.parameters[0].find(",") != std::string::npos) {
+		sendError(403, client, message, message.parameters[0]);
+		return ;
+	}
 	if (!channelExist(message.parameters[0])) {
 		Channel *newChannel = new Channel(message.parameters[0], &client);
 		_channels.push_back(newChannel);
