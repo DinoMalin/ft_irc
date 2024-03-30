@@ -10,7 +10,7 @@ void Server::handlePART(Client &client, Message message) {
 		return ;
 	}
 
-	Channel channel = getChannel(message.parameters[0]);
+	Channel &channel = getChannel(message.parameters[0]);
 	if (!channel.isInChannel(client.getNickname())) {
 		sendError(402, client, message, message.parameters[0]);
 		return ;
