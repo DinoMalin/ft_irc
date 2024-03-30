@@ -14,6 +14,7 @@ class Client {
 		std::string _hostname;
 		std::string _source;
 		Channel *_channel;
+		std::string _ip;
 
 		bool _registered;
 		bool _triedToRegister;
@@ -30,6 +31,7 @@ class Client {
 		std::string getPassword() const;
 		std::string getHostname() const;
 		std::string getSource() const;
+		std::string getIp() const;
 		bool isQuitting() const;
 		bool getRegistered() const;
 		bool triedToRegister() const;
@@ -41,6 +43,7 @@ class Client {
 		void setSource(std::string source);
 		void tryToRegister();
 		void setRegistered();
+		void setIp(std::string ip);
 		void clear();
 		Client& operator=(const Client& src);
 };

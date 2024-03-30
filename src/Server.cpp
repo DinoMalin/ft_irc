@@ -56,6 +56,7 @@ void Server::treatNewConnexion() {
 		std::cout << "Error in accept" << std::endl;
 	} else {
 		std::cout << "New connection accepted" << std::endl;
+		_clients[_numClients - 1].setIp(inet_ntoa(_clientAddr.sin_addr));
 		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
 		_fds[_numClients].events = POLLIN;
 		++_numClients;

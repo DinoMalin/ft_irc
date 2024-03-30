@@ -31,13 +31,13 @@ void Server::handlePRIVMSG(Client &client, Message message) {
 	for (size_t i = 0; i < message.parameters.size(); i++) {
 		if (channelExist(message.parameters[i])) {
 			Channel channel = getChannel(message.parameters[i]);
-			std::string res = ":" + client.getNickname() + " PRIVMSG " + channel.getName() + " " + message.remainder + CRLF;
+			std::string res = ":" + client.getSource() + " PRIVMSG " + channel.getName() + " :" + message.remainder + CRLF;
             channel.sendChannel(res, client, true);
 			continue;
 		}
 		if (clientExist(message.parameters[i])) {
 			Client clientTarget = getClient(message.parameters[i]);
-			std::string res = ":" + client.getNickname() + " PRIVMSG " + clientTarget.getNickname() + " " + message.remainder + CRLF;
+			std::string res = ":" + client.getSource() + " PRIVMSG " + clientTarget.getNickname() + " :" + message.remainder + CRLF;
 			send(clientTarget.getSocket(), res.c_str(), res.length(), 0);
 			continue;
 		}
