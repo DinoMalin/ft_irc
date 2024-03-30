@@ -38,7 +38,7 @@ void Server::handlePRIVMSG(Client &client, Message message) {
 		if (clientExist(message.parameters[i])) {
 			Client clientTarget = getClient(message.parameters[i]);
 			std::string res = ":" + client.getNickname() + " PRIVMSG " + clientTarget.getNickname() + " " + message.remainder + CRLF;
-			send(client.getSocket(), res.c_str(), res.length(), 0);
+			send(clientTarget.getSocket(), res.c_str(), res.length(), 0);
 			continue;
 		}
 	}
