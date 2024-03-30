@@ -1,1 +1,6 @@
 nc -lk localhost ircd
+
+- A tester :
+  Plusieurs modes en mm temps verifier que ca marche bien
+  genre :
+    /mode +ko password operator
