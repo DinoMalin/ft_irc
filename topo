@@ -1,9 +1,1 @@
 nc -lk localhost ircd
-
-- A implementer :
-  mettre un buffer propre a chaque client, sinon exemple :
-    J'envoie un début de message
-    Qqn join
-    J'envoie la fin du message
-    => Erreur de compréhension
-    

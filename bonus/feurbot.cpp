@@ -11,14 +11,15 @@ void send_message(int sockfd, const std::string& channel, const std::string& mes
 }
 
 int main(int argc, char** argv) {
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <server> <port> <channel>\n";
+    if (argc != 5) {
+        std::cerr << "Usage: " << argv[0] << " <server> <port> <channel> <passsword>\n";
         return 1;
     }
 
     const std::string server = argv[1];
     const int port = std::atoi(argv[2]);
     const std::string channel = argv[3];
+    const std::string password = argv[4];
 
     struct sockaddr_in serv_addr;
     struct hostent *server_info;
@@ -46,9 +47,10 @@ int main(int argc, char** argv) {
         std::cerr << "Error connecting\n";
         return 1;
     }
-
+    std::string pass_message = "PASS " + password + "\r\n";
     std::string join_message = "JOIN " + channel + "\r\n";
     std::string user_message = "USER FeurBot 0 * :FeurBot\r\n";
+    send(sockfd, pass_message.c_str(), pass_message.size(), 0);
     send(sockfd, "NICK FeurBot\r\n", 13, 0);
     send(sockfd, user_message.c_str(), user_message.size(), 0);
     send(sockfd, join_message.c_str(), join_message.size(), 0);
