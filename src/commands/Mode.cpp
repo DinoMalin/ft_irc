@@ -50,11 +50,11 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	size_t nbParamsNecessary = 2;
-	if (flag['k'])
+	if (flag['k']  && operation == '+')
 		nbParamsNecessary++;
 	if (flag['o'])
 		nbParamsNecessary++;
-	if (flag['l'])
+	if (flag['l'] && operation == '+')
 		nbParamsNecessary++;
 	if (message.parameters.size() < nbParamsNecessary) {
 		sendError(461, client, message, "");

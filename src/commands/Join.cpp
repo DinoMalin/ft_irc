@@ -10,6 +10,8 @@ void Server::handleJOIN(Client &client, Message message) {
 
 	for (size_t i = 0; i < channelNames.size(); i++) {
 		if (!channelExist(channelNames[i])) {
+			if (channelNames[i][0] != '#')
+        		channelNames[i] = '#' + channelNames[i];
 			Channel *newChannel = new Channel(channelNames[i], &client);
 			_channels.push_back(newChannel);
 			_allChannels.push_back(newChannel);
@@ -34,7 +36,7 @@ void Server::handleJOIN(Client &client, Message message) {
 				sendError(473, client, message, channelNames[i]);
 				return ;
 			}
-			if (channel.isLimited() && channel.getLimitUsers() <= channel.getNbClients()) {
+			if (channel.isLimited() && channel.getLimitUsers() < channel.getNbClients()) {
 				sendError(471, client, message, channelNames[i]);
 				return ;
 			}
