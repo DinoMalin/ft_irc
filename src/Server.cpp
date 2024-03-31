@@ -82,9 +82,11 @@ void Server::receiveMessage(int index) {
 		while (pos != std::string::npos) {
 			std::string line = _clients[index - 1]._buffer.substr(0, pos);
 			Message res = getParsedCommand(line);
-			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered()
-				|| (res.command == "PASS" || res.command == "NICK" || res.command == "USER" || res.command == "PING" || res.command == "CAP"))) {
+			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered() || (res.command == "PASS" || res.command == "CAP" || res.command == "NICK"))) {
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
+			} else if (commandsIsImplemented(res.command)) {
+				sendError(464, _clients[index - 1], res, "");
+				_clients[index - 1].quitting();
 			}
 			_clients[index - 1]._buffer.erase(0, pos + 2);
 			pos = _clients[index - 1]._buffer.find("\r\n");
