@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
+void Server::initFuncs() {
 	_stringToFunc["CAP"] = &Server::handleCAP;
 	_stringToFunc["PING"] = &Server::handlePING;
 	_stringToFunc["PASS"] = &Server::handlePASS;
@@ -15,7 +15,10 @@ Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientA
 	_stringToFunc["TOPIC"] = &Server::handleTOPIC;
 	_stringToFunc["MODE"] = &Server::handleMODE;
 	_stringToFunc["QUIT"] = &Server::handleQUIT;
+}
 
+Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
+	initFuncs();
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
