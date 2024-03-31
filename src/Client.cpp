@@ -1,8 +1,8 @@
 #include "Client.hpp"
 
-Client::Client() {}
+Client::Client() : _registered(false), _triedToRegister(false), _quitting(false), _buffer("") {}
 
-Client::Client(int socket) : _socket(socket), _registered(false), _triedToRegister(false), _quitting(false) {}
+Client::Client(int socket) : _socket(socket), _registered(false), _triedToRegister(false), _quitting(false), _buffer("") {}
 
 Client::~Client() {}
 
@@ -33,6 +33,7 @@ Client& Client::operator=(const Client& src) {
     _triedToRegister = src._triedToRegister;
     _registered = src._registered;
     _quitting = src._quitting;
+    _buffer = src._buffer;
     return *this;
 }
 

@@ -86,11 +86,8 @@ void Server::handleMODE(Client &client, Message message) {
 			channel.removeOperator(getClient(message.parameters[1 + flag['o']]).getNickname());
 	}
 	if (flag['l']) {  
-		if (operation == '+') {
+		if (operation == '+')
 			channel.setLimitUsers(std::atoi(message.parameters[1 + flag['l']].c_str()));
-			std::cout << 1 + flag['l'] << std::endl;
-			std::cout << channel.getLimitUsers() << std::endl;
-		}
 		else
 			channel.setLimited(false);
 	}

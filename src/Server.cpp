@@ -59,6 +59,7 @@ void Server::treatNewConnexion() {
 		_clients[_numClients - 1].setIp(inet_ntoa(_clientAddr.sin_addr));
 		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
 		_fds[_numClients].events = POLLIN;
+		_fds[_numClients].revents = POLLIN;
 		++_numClients;
 	}
 }
