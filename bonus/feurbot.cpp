@@ -1,12 +1,8 @@
-#include <iostream>
-#include <cstring>
-#include <unistd.h>
-#include <arpa/inet.h>
 #include <netdb.h>
-#include <cstdlib>
+#include "header.hpp"
 
 void send_message(int sockfd, const std::string& channel, const std::string& message) {
-    std::string full_message = "PRIVMSG " + channel + " :" + message + "\r\n";
+    std::string full_message = "PRIVMSG " + channel + " :" + message + CRLF;
     send(sockfd, full_message.c_str(), full_message.size(), 0);
 }
 
@@ -67,10 +63,10 @@ int main(int argc, char** argv) {
         std::cerr << "Error connecting\n";
         return 1;
     }
-    std::string pass_message = "PASS " + password + "\r\n";
-    std::string user_message = "USER feurbot Feurbot localhost :FeurBot\r\n";
-    std::string join_message = "JOIN " + channel + "\r\n";
-    std::string nick_message = "NICK feurbot\r\n";
+    std::string pass_message = "PASS " + password + CRLF;
+    std::string user_message = "USER feurbot Feurbot localhost :FeurBot";
+    std::string join_message = "JOIN " + channel + CRLF;
+    std::string nick_message = "NICK feurbot" + std::string(CRLF);
     send(sockfd, pass_message.c_str(), pass_message.size(), 0);
     send(sockfd, nick_message.c_str(), nick_message.size(), 0);
     send(sockfd, user_message.c_str(), user_message.size(), 0);

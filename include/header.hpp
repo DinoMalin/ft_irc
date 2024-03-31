@@ -18,8 +18,8 @@
 #define MAX_CLIENTS 200
 #define BUFFER_SIZE 513
 
-#define CRLF "\r\n"
-#define ADDRESS "BreizhRC"
+#define CRLF	"\r\n"
+#define ADDRESS	"BreizhRC"
 
 class Client;
 
@@ -38,7 +38,7 @@ struct Message {
 	int         errorCode;
 };
 
-Message getParsedCommand(std::string str);
-void sendError(int code, Client client, Message message, std::string opt);
-std::string toString(int nb);
-std::vector<std::string> split(std::string str, char delimiter);
+Message						getParsedCommand(std::string str);
+void						sendError(int code, Client client, Message message, std::string opt);
+std::string 				toString(int nb);
+std::vector<std::string>	split(std::string str, char delimiter);
