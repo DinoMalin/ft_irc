@@ -3,7 +3,7 @@
 void Server::handleNICK(Client &client, Message message) {
 	if (client.getNickname() == message.parameters[0])
 		return ;
-	if (message.parameters[0].find(":") != std::string::npos || message.parameters[0].find("#") != std::string::npos || message.remainder != "") {
+	if (message.parameters[0].find(":") != std::string::npos || message.parameters[0].find("#") != std::string::npos ||  message.parameters[0].find(",") != std::string::npos || message.remainder != "") {
 		sendError(432, client, message, message.parameters[0]);
 		return ;
 	}
