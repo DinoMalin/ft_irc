@@ -19,6 +19,7 @@ void Server::initFuncs() {
 
 Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
 	initFuncs();
+
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
@@ -71,13 +72,13 @@ void Server::receiveMessage(int index) {
 	char buff[BUFFER_SIZE] = {};
 	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
 
-	if (bytesRead < 0) {
+	std::cout << "Client no." << index << std::endl;
+
+	if (bytesRead < 0)
 		std::cout << "Error in recv" << std::endl;
-	}
-	if (bytesRead == 0) {
+	if (bytesRead == 0)
 		disconnectClient(index);
-	} else if (bytesRead > 0) {
-		std::cout << "Client no." << index << std::endl;
+	else if (bytesRead > 0) {
 		_clients[index - 1]._buffer += std::string(buff, bytesRead);
 		std::cout << _clients[index - 1]._buffer << std::endl;
 	
@@ -85,20 +86,21 @@ void Server::receiveMessage(int index) {
 		while (pos != std::string::npos) {
 			std::string line = _clients[index - 1]._buffer.substr(0, pos);
 			Message res = getParsedCommand(line);
+
 			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered() || (res.command == "PASS" || res.command == "CAP" || res.command == "NICK"))) {
 				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
 			} else if (commandsIsImplemented(res.command)) {
 				sendError(464, _clients[index - 1], res, "");
 				_clients[index - 1].quitting();
 			}
+
 			_clients[index - 1]._buffer.erase(0, pos + 2);
 			pos = _clients[index - 1]._buffer.find("\r\n");
 		}
 	}
 
-	if (_clients[index - 1].isQuitting()) {
+	if (_clients[index - 1].isQuitting())
 		disconnectClient(index);
-	}
 }
 
 void Server::run() {
