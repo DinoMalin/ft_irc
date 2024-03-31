@@ -1,6 +1,6 @@
 nc -lk localhost ircd
 
+- CORRIGER :
+  - bot
+
 - A tester :
-  Plusieurs modes en mm temps verifier que ca marche bien
-  genre :
-    /mode +ko password operator

@@ -10,16 +10,36 @@ void send_message(int sockfd, const std::string& channel, const std::string& mes
     send(sockfd, full_message.c_str(), full_message.size(), 0);
 }
 
+bool endsWiths(std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (fullString.compare (fullString.length() - ending.length(), ending.length(), ending) == 0);
+    } else {
+        return false;
+    }
+}
+
+std::string toLower(std::string str) {
+    std::string result;
+    
+    for (size_t i = 0; i < str.size(); i++) {
+        result += tolower(str[i]);
+    }
+    return result;
+}
+
 int main(int argc, char** argv) {
     if (argc != 5) {
         std::cerr << "Usage: " << argv[0] << " <server> <port> <channel> <passsword>\n";
         return 1;
     }
 
-    const std::string server = argv[1];
-    const int port = std::atoi(argv[2]);
-    const std::string channel = argv[3];
-    const std::string password = argv[4];
+    std::string server = argv[1];
+    int port = std::atoi(argv[2]);
+    std::string channel = argv[3];
+    std::string password = argv[4];
+    
+    if (channel[0] != '#')
+        channel = '#' + channel;
 
     struct sockaddr_in serv_addr;
     struct hostent *server_info;
@@ -48,10 +68,11 @@ int main(int argc, char** argv) {
         return 1;
     }
     std::string pass_message = "PASS " + password + "\r\n";
+    std::string user_message = "USER feurbot Feurbot localhost :FeurBot\r\n";
     std::string join_message = "JOIN " + channel + "\r\n";
-    std::string user_message = "USER FeurBot 0 * :FeurBot\r\n";
+    std::string nick_message = "NICK feurbot\r\n";
     send(sockfd, pass_message.c_str(), pass_message.size(), 0);
-    send(sockfd, "NICK FeurBot\r\n", 13, 0);
+    send(sockfd, nick_message.c_str(), nick_message.size(), 0);
     send(sockfd, user_message.c_str(), user_message.size(), 0);
     send(sockfd, join_message.c_str(), join_message.size(), 0);
 
@@ -62,9 +83,20 @@ int main(int argc, char** argv) {
         std::string message(buffer, bytes_received);
         std::cout << message;
 
-        if (message.find("PRIVMSG " + channel) != std::string::npos &&
-            message.find_last_of("\n\r") == message.size() - 2 && message.find("quoi\r\n") != std::string::npos) {
-            send_message(sockfd, channel, "feur");
+        if (message.find("PRIVMSG " + channel) != std::string::npos) {
+            std::string lower = toLower(message);
+            if (endsWiths(lower, "quoi\r\n"))
+                send_message(sockfd, channel, "feur");
+            if (endsWiths(lower, "kwa\r\n"))
+                send_message(sockfd, channel, "feur");
+            if (endsWiths(lower, "qua\r\n"))
+                send_message(sockfd, channel, "feur");
+            if (endsWiths(lower, "quoua\r\n"))
+                send_message(sockfd, channel, "feur");
+            if (endsWiths(lower, "quouoi\r\n"))
+                send_message(sockfd, channel, "feur");
+            if (endsWiths(lower, "quwoa\r\n"))
+                send_message(sockfd, channel, "feur");
         }
     }
 
