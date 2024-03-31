@@ -9,11 +9,11 @@ Client::~Client() {}
 int Client::getSocket() const {return _socket;}
 bool Client::getRegistered() const {return _registered;}
 bool Client::triedToRegister() const {return _triedToRegister;}
+bool Client::isQuitting() const {return _quitting;}
 std::string Client::getUsername() const {return _username;}
 std::string Client::getNickname() const {return _nickname;}
 std::string Client::getPassword() const {return _password;}
 std::string Client::getHostname() const {return _hostname;}
-bool Client::isQuitting() const {return _quitting;}
 std::string Client::getIp() const {return _ip;}
 
 void Client::setUsername(std::string username) {_username = username;}
