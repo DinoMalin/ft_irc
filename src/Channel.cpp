@@ -120,3 +120,18 @@ bool Channel::getCanUseTopic() const {
 void Channel::setCanUseTopic(bool canUseTopic) {
     _canUseTopic = canUseTopic;
 }
+
+void Channel::rearrangeUsers(Client *disconnected) {
+    for (size_t i = 0; i < _clients.size(); i++) {
+        if (disconnected < _clients[i])
+            _clients[i]--;
+    }
+    for (size_t i = 0; i < _operators.size(); i++) {
+        if (disconnected < _operators[i])
+            _operators[i]--;
+    }
+    for (size_t i = 0; i < _registered.size(); i++) {
+        if (disconnected < _registered[i])
+            _registered[i]--;
+    }
+}

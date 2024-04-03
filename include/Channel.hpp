@@ -50,4 +50,5 @@ class Channel {
 		void sendChannel(std::string message, Client author, bool skipAuthor) const;
         void setInviteOnly(bool inv);
         bool isInviteOnly();
+        void rearrangeUsers(Client *disconnected);
 };

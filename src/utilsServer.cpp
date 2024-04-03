@@ -80,6 +80,10 @@ void Server::disconnectClient(int index) {
 		_fds[i] = _fds[i + 1];
 		_clients[i - 1] = _clients[i];
 	}
+
+    for (size_t i = 0; i < _channels.size(); i++) {
+        _channels[i]->rearrangeUsers(&_clients[i - 1]);
+    }
 	--_numClients;
 }
 
