@@ -43,6 +43,7 @@ void Channel::removeClient(std::string nickname) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); it++) {
         if ((*it)->getNickname() == nickname) {
             removeOperator((*it)->getNickname());
+            removeRegistered((*it)->getNickname());
             _clients.erase(it);
             return;
         }

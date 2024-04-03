@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client() : _nickname("*"), _registered(false), _quitting(false), _nicked(false), _usered(false), _welcomeSent(false), _buffer("") {}
+Client::Client() : _socket(0), _nickname("*"), _registered(false), _quitting(false), _nicked(false), _usered(false), _welcomeSent(false), _buffer("") {}
 
 Client::Client(int socket) : _socket(socket), _nickname("*"), _registered(false), _quitting(false), _nicked(false), _usered(false), _welcomeSent(false), _buffer("") {}
 
@@ -33,17 +33,15 @@ Client& Client::operator=(const Client& src) {
     _socket = src._socket;
     _username = src._username;
     _nickname = src._nickname;
+    _hostname = src._hostname;
+    _ip = src._ip;
     _registered = src._registered;
     _quitting = src._quitting;
-    _buffer = src._buffer;
     _nicked = src._nicked;
     _usered = src._usered;
     _welcomeSent = src._welcomeSent;
+    _buffer = src._buffer;
     return *this;
-}
-
-void Client::clear() {
-    *this = Client();
 }
 
 std::string Client::getSource() const {

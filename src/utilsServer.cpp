@@ -60,14 +60,22 @@ bool Server::commandsIsImplemented(std::string str) {
 
 void Server::disconnectClient(int index) {
 	std::cout << "Client disconnected" << std::endl;
-	close(_fds[index].fd);
     Client &client = _clients[index - 1];
+
 	for (size_t i = 0; i < _channels.size(); i++) {
         std::string res = ":" + client.getSource() + " QUIT " + _channels[i]->getName() + " :" + client.getNickname() + CRLF;
 	    _channels[i]->sendChannel(res, client, false);
 		_channels[i]->removeClient(client.getNickname());
+
+        if (_channels[i]->getNbClients() == 0) {
+            for (size_t j = 0; j < _channels.size(); j++) {
+                if (_channels[j]->getName() == _channels[j]->getName())
+                    _channels.erase(_channels.begin() + j);
+            }
+		}
 	}
-	client.clear();
+
+	close(_fds[index].fd);
 	for (int i = index; i < _numClients - 1; ++i) {
 		_fds[i] = _fds[i + 1];
 		_clients[i - 1] = _clients[i];
@@ -95,4 +103,5 @@ void Server::sendWelcome(Client &client) {
 	send(client.getSocket(), res2.c_str(), res2.length(), 0);
 	send(client.getSocket(), res3.c_str(), res3.length(), 0);
 	send(client.getSocket(), res4.c_str(), res4.length(), 0);
+	send(client.getSocket(), res5.c_str(), res5.length(), 0);
 }

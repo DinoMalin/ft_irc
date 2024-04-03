@@ -47,9 +47,7 @@ class Client {
 		void setUsername(std::string username);
 		void setNickname(std::string nickname);
 		void setHostname(std::string hostname);
-		void tryToRegister();
 		void setRegistered();
 		void setIp(std::string ip);
-		void clear();
 		Client& operator=(const Client& src);
 };
