@@ -9,9 +9,9 @@ void Server::handleJOIN(Client &client, Message message) {
 	std::vector<std::string>channelNames = split(message.parameters[0], ',');
 
 	for (size_t i = 0; i < channelNames.size(); i++) {
+		if (channelNames[i][0] != '#')
+			channelNames[i] = '#' + channelNames[i];
 		if (!channelExist(channelNames[i])) {
-			if (channelNames[i][0] != '#')
-        		channelNames[i] = '#' + channelNames[i];
 			Channel *newChannel = new Channel(channelNames[i], &client);
 			_channels.push_back(newChannel);
 			_allChannels.push_back(newChannel);

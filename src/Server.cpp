@@ -1,22 +1,5 @@
 #include "Server.hpp"
 
-void Server::initFuncs() {
-	_stringToFunc["CAP"] = &Server::handleCAP;
-	_stringToFunc["PING"] = &Server::handlePING;
-	_stringToFunc["PASS"] = &Server::handlePASS;
-	_stringToFunc["NICK"] = &Server::handleNICK;
-	_stringToFunc["USER"] = &Server::handleUSER;
-	_stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
-	_stringToFunc["JOIN"] = &Server::handleJOIN;
-	_stringToFunc["PART"] = &Server::handlePART;
-	_stringToFunc["LIST"] = &Server::handleLIST;
-	_stringToFunc["KICK"] = &Server::handleKICK;
-	_stringToFunc["INVITE"] = &Server::handleINVITE;
-	_stringToFunc["TOPIC"] = &Server::handleTOPIC;
-	_stringToFunc["MODE"] = &Server::handleMODE;
-	_stringToFunc["QUIT"] = &Server::handleQUIT;
-}
-
 Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
 	initFuncs();
 
@@ -54,55 +37,6 @@ Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientA
 
 Server::~Server() {disconnectEveryone();}
 
-void Server::treatNewConnexion() {
-	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
-	if (_clients[_numClients - 1].getSocket() < 0) {
-		std::cout << "Error in accept" << std::endl;
-	} else {
-		std::cout << "New connection accepted" << std::endl;
-		_clients[_numClients - 1].setIp(inet_ntoa(_clientAddr.sin_addr));
-		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
-		_fds[_numClients].events = POLLIN;
-		_fds[_numClients].revents = POLLIN;
-		++_numClients;
-	}
-}
-
-void Server::receiveMessage(int index) {
-	char buff[BUFFER_SIZE] = {};
-	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
-
-	std::cout << "Client no." << index << std::endl;
-
-	if (bytesRead < 0)
-		std::cout << "Error in recv" << std::endl;
-	if (bytesRead == 0)
-		disconnectClient(index);
-	else if (bytesRead > 0) {
-		_clients[index - 1]._buffer += std::string(buff, bytesRead);
-		std::cout << _clients[index - 1]._buffer << std::endl;
-	
-		size_t pos = _clients[index - 1]._buffer.find("\r\n");
-		while (pos != std::string::npos) {
-			std::string line = _clients[index - 1]._buffer.substr(0, pos);
-			Message res = getParsedCommand(line);
-
-			if (commandsIsImplemented(res.command) && (_clients[index - 1].getRegistered() || (res.command == "PASS" || res.command == "CAP" || res.command == "NICK"))) {
-				(this->*_stringToFunc[res.command])(_clients[index - 1], res);
-			} else if (commandsIsImplemented(res.command)) {
-				sendError(464, _clients[index - 1], res, "");
-				_clients[index - 1].quitting();
-			}
-
-			_clients[index - 1]._buffer.erase(0, pos + 2);
-			pos = _clients[index - 1]._buffer.find("\r\n");
-		}
-	}
-
-	if (_clients[index - 1].isQuitting())
-		disconnectClient(index);
-}
-
 void Server::run() {
 	while (true) {
 		if (poll(_fds, _numClients, -1) == -1) {
@@ -124,62 +58,56 @@ void Server::run() {
 	close(_socket);
 }
 
-Channel& Server::getChannel(std::string name) {
-	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		if ((*it)->getName() == name)
-			return *(*it);
+void Server::treatNewConnexion() {
+	_clients[_numClients - 1] = Client(accept(_socket, (struct sockaddr*)&_clientAddr, &_clientAddrSize));
+	if (_clients[_numClients - 1].getSocket() < 0) {
+		std::cout << "Error in accept" << std::endl;
+	} else {
+		std::cout << "New connection accepted" << std::endl;
+		_clients[_numClients - 1].setIp(inet_ntoa(_clientAddr.sin_addr));
+		_fds[_numClients].fd = _clients[_numClients - 1].getSocket();
+		_fds[_numClients].events = POLLIN;
+		_fds[_numClients].revents = 0;
+		++_numClients;
 	}
-	return *_channels[0];
 }
 
-Client& Server::getClient(std::string nickname) {
-	for (int i = 0; i < MAX_CLIENTS; ++i) {
-		if (_clients[i].getNickname() == nickname)
-			return _clients[i];
-	}
-	return _clients[0];
-}
+void Server::receiveMessage(int index) {
+	char buff[BUFFER_SIZE] = {};
+	ssize_t bytesRead = recv(_fds[index].fd, buff, BUFFER_SIZE, 0);
 
-bool Server::clientExist(std::string nickname) {
-	for (int i = 0; i < _numClients; i++) {
-		if (_clients[i].getNickname() == nickname)
-			return true;
-	}
-	return false;
-}
+	std::cout << "Client no." << index << std::endl;
 
-bool Server::channelExist(std::string channel) {
-	for (size_t i = 0; i < _channels.size(); i++) {
-		if (_channels[i]->getName() == channel)
-			return true;
-	}
-	return false;
-}
+	Client &client = _clients[index - 1];
+	if (bytesRead < 0)
+		std::cout << "Error in recv" << std::endl;
+	if (bytesRead == 0)
+		disconnectClient(index);
+	else if (bytesRead > 0) {
+		client._buffer += std::string(buff, bytesRead);
+		std::cout << client._buffer << std::endl;
+	
+		size_t pos = client._buffer.find("\r\n");
+		while (pos != std::string::npos) {
+			std::string line = client._buffer.substr(0, pos);
+			Message res = getParsedCommand(line);
 
-bool Server::commandsIsImplemented(std::string str) {
-	for (std::map<std::string, Funcs>::iterator it = _stringToFunc.begin(); it != _stringToFunc.end(); it++) {
-		if (it->first == str)
-			return true;
-	}
-	return false;
-}
+			if (commandsIsImplemented(res.command) && (client.getRegistered() || (res.command == "PASS" || res.command == "CAP"))) {
+				(this->*_stringToFunc[res.command])(client, res);
+				if (client.getRegistered() && client.getUsered() && client.getNicked() && !client.getWelcomeSent()) {
+					sendWelcome(client);
+					client.setWelcomeSent();
+				}
+			} else if (commandsIsImplemented(res.command)) {
+				sendError(464, client, res, "");
+				client.quitting();
+			}
 
-void Server::disconnectClient(int index) {
-	std::cout << "Client disconnected" << std::endl;
-	close(_fds[index].fd);
-	_clients[index - 1].clear();
-	for (int i = index; i < _numClients - 1; ++i) {
-		_fds[i] = _fds[i + 1];
-		_clients[i - 1] = _clients[i];
+			client._buffer.erase(0, pos + 2);
+			pos = client._buffer.find("\r\n");
+		}
 	}
-	--_numClients;
-}
 
-void Server::disconnectEveryone() {
-	for (int i = 0; i < _numClients; i++) {
-		disconnectClient(i);
-	}
-	for (std::vector<Channel *>::iterator it = _allChannels.begin(); it != _allChannels.end(); ++it) {
-		delete *it;
-	}
+	if (client.isQuitting())
+		disconnectClient(index);
 }

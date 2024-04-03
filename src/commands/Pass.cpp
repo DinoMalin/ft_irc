@@ -1,7 +1,6 @@
 #include "Server.hpp"
 
 void Server::handlePASS(Client &client, Message message) {
-	client.tryToRegister();
 	if (message.parameters.size() == 0) {
 		sendError(461, client, message, "");
 		client.quitting();

@@ -90,5 +90,5 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	std::string res = ":" + client.getSource() + " MODE " + channel.getName() + " " + message.parameters[1] + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
+	channel.sendChannel(res, client, false);
 }

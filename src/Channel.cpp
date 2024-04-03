@@ -40,12 +40,11 @@ std::string Channel::getUserList() {
 }
 
 void Channel::removeClient(std::string nickname) {
-    for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end();) {
+    for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); it++) {
         if ((*it)->getNickname() == nickname) {
             removeOperator((*it)->getNickname());
-            it = _clients.erase(it);
-        } else {
-            ++it;
+            _clients.erase(it);
+            return;
         }
     }
 }

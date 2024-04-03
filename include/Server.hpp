@@ -58,8 +58,9 @@ class Server {
         bool clientExist(std::string nickname);
         bool channelExist(std::string channel);
         void reply(Client &client, Message message);
-        
+
         void initFuncs();
+        void sendWelcome(Client &client);
     public:
         ~Server();
         Server(int port, std::string password);

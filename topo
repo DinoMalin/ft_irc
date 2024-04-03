@@ -1,0 +1,5 @@
+A REGLER:
+- Bizarre qd je quitte NC alors que je suis dans un channel : Ne retire pas le user du channel
+- Pouvoir envoyer les msg de debut ds n'importe quel ordre, sauf PASS
+- Plus de msg d'accueil : RPL_ISUPPORT (005)
+- gerer taille max nick

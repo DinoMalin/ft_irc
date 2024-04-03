@@ -9,7 +9,7 @@ OBJ_DIR = obj/
 SRC_DIR = src/
 BONUS_DIR = bonus/
 
-FILES = main Channel Client Server utils \
+FILES = main Channel Client Server utilsServer utils \
 		commands/Cap commands/Invite commands/Join commands/Kick commands/List commands/Mode \
 		commands/Nick commands/Part commands/Pass commands/Ping commands/Privmsg \
 		commands/Topic commands/User commands/Quit
