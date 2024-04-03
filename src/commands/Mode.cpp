@@ -47,44 +47,44 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	size_t nbParamsNecessary = 2;
-	if (flag['k']  && operation == '+')
+	if (flag[int('k')]  && operation == '+')
 		nbParamsNecessary++;
-	if (flag['o'])
+	if (flag[int('o')])
 		nbParamsNecessary++;
-	if (flag['l'] && operation == '+')
+	if (flag[int('l')] && operation == '+')
 		nbParamsNecessary++;
 	if (message.parameters.size() < nbParamsNecessary) {
 		sendError(461, client, message, "");
 		return ;	
 	}
 
-	if (flag['i']) {
+	if (flag[int('i')]) {
 		if (operation == '+')
 			channel.setInviteOnly(true);
 		else
 			channel.setInviteOnly(false);
 	}
-	if (flag['t']) {
+	if (flag[int('t')]) {
 		if (operation == '+')
 			channel.setCanUseTopic(true);
 		else
 			channel.setCanUseTopic(false);
 	}
-	if (flag['k']) {
+	if (flag[int('k')]) {
 		if (operation == '+')
-			channel.setPassword(message.parameters[1 + flag['k']]);
+			channel.setPassword(message.parameters[1 + flag[int('k')]]);
 		else
 			channel.setPassword("");
 	}
-	if (flag['o']) {
+	if (flag[int('o')]) {
 		if (operation == '+')
-			channel.addOperator(&getClient(message.parameters[1 + flag['o']]));
+			channel.addOperator(&getClient(message.parameters[1 + flag[int('o')]]));
 		else
-			channel.removeOperator(getClient(message.parameters[1 + flag['o']]).getNickname());
+			channel.removeOperator(getClient(message.parameters[1 + flag[int('o')]]).getNickname());
 	}
-	if (flag['l']) {  
+	if (flag[int('l')]) {  
 		if (operation == '+')
-			channel.setLimitUsers(std::atoi(message.parameters[1 + flag['l']].c_str()));
+			channel.setLimitUsers(std::atoi(message.parameters[1 + flag[int('l')]].c_str()));
 		else
 			channel.setLimited(false);
 	}

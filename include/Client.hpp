@@ -12,7 +12,6 @@ class Client {
 		std::string _nickname;
 		std::string _password;
 		std::string _hostname;
-		Channel *_channel;
 		std::string _ip;
 
 		bool _registered;
