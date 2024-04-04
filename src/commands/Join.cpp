@@ -13,9 +13,6 @@ void Server::handleJOIN(Client &client, Message message) {
 			channelNames[i] = '#' + channelNames[i];
 		if (!channelExist(channelNames[i])) {
 			Channel *newChannel = new Channel(channelNames[i]);
-			std::cout << "===invalid read===" << std::endl;
-			std::cout << client.getNickname() << std::endl;
-			std::cout << "===invalid read===" << std::endl;
 			newChannel->addClient(client.getNickname());
 			newChannel->addOperator(client.getNickname());
 			newChannel->addRegistered(client.getNickname());
