@@ -1,3 +1,0 @@
-Pb :
-Quand user1 se connecte puis join, user2 se connecte puis join => invalid read
-Quand user1 se connecte, user2 se connecte, user1 join, user2 join => pas de pb
