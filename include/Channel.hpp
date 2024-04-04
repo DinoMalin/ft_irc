@@ -15,13 +15,12 @@ class Channel {
         bool _limited;
         bool _canUseTopic;
         bool _inviteOnly;
-		std::vector<Client*> _clients;
-        std::vector<Client*> _registered;
-        std::vector<Client*> _operators;
+		std::vector<std::string> _clients;
+        std::vector<std::string> _registered;
+        std::vector<std::string> _operators;
 
 	public:
 		Channel(std::string name);
-        Channel(std::string name, Client *op);
         ~Channel();
 		std::string getName() const;
         std::string getTopic() const;
@@ -37,18 +36,24 @@ class Channel {
         void setPassword(std::string password);
         void setLimitUsers(int limitUsers);
         void setLimited(bool limited);
-        void addClient(Client *client);
+
+        void addClient(std::string nickname);
         void removeClient(std::string username);
-        void addRegistered(Client *client);
+        bool isInChannel(std::string nickname);
+    
+        void addRegistered(std::string nickname);
         void removeRegistered(std::string username);
         void clearRegistered();
         bool isRegistered(std::string username);
-        bool isInChannel(std::string nickname);
-        void addOperator(Client *client);
+    
+    
+        void addOperator(std::string nickname);
         void removeOperator(std::string username);
         bool isOperator(std::string username);
-		void sendChannel(std::string message, Client author, bool skipAuthor) const;
+    
+		void sendChannel(std::string message, Client author, std::vector<Client> clients, bool skipAuthor);
         void setInviteOnly(bool inv);
         bool isInviteOnly();
-        void rearrangeUsers(Client *disconnected);
+
+        void renameClient(std::string oldNick, std::string newNick);
 };

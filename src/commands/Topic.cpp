@@ -21,7 +21,7 @@ void Server::handleTOPIC(Client &client, Message message) {
 			channel.setTopic(message.parameters[1]);
 			std::string res = ":" + client.getSource() + " TOPIC " + message.parameters[0] + " :"
 				+ message.parameters[1] + CRLF;
-			channel.sendChannel(res, client, false);
+			channel.sendChannel(res, client, _clients, false);
 		} else {
 			if (channel.getCanUseTopic())
 				sendError(482, client, message, message.parameters[0]);

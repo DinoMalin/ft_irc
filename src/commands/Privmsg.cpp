@@ -29,7 +29,7 @@ void Server::handlePRIVMSG(Client &client, Message message) {
 		if (channelExist(params[i])) {
 			Channel channel = getChannel(params[i]);
 			std::string res = ":" + client.getSource() + " PRIVMSG " + channel.getName() + " :" + message.remainder + CRLF;
-			channel.sendChannel(res, client, true);
+			channel.sendChannel(res, client, _clients, true);
 			continue;
 		}
 		if (clientExist(params[i])) {

@@ -12,13 +12,19 @@ void Server::handleJOIN(Client &client, Message message) {
 		if (channelNames[i][0] != '#')
 			channelNames[i] = '#' + channelNames[i];
 		if (!channelExist(channelNames[i])) {
-			Channel *newChannel = new Channel(channelNames[i], &client);
+			Channel *newChannel = new Channel(channelNames[i]);
+			std::cout << "===invalid read===" << std::endl;
+			std::cout << client.getNickname() << std::endl;
+			std::cout << "===invalid read===" << std::endl;
+			newChannel->addClient(client.getNickname());
+			newChannel->addOperator(client.getNickname());
+			newChannel->addRegistered(client.getNickname());
 			_channels.push_back(newChannel);
 			_allChannels.push_back(newChannel);
 			std::string broadcast = ":" + client.getSource() + " JOIN :" + newChannel->getName() + CRLF;
 			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
 			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
-			newChannel->sendChannel(broadcast, client, false);
+			newChannel->sendChannel(broadcast, client, _clients, false);
 			send(client.getSocket(), res2.c_str(), res2.length(), 0);
 			send(client.getSocket(), res3.c_str(), res3.length(), 0);
 		}
@@ -40,12 +46,12 @@ void Server::handleJOIN(Client &client, Message message) {
 				sendError(471, client, message, channelNames[i]);
 				return ;
 			}
-			channel.addClient(&client);
-			channel.addRegistered(&client);
+			channel.addClient(client.getNickname());
+			channel.addRegistered(client.getNickname());
 			std::string broadcast = ":" + client.getSource() + " JOIN :" + channel.getName() + CRLF;
 			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + channel.getName() + " :" + channel.getUserList() + CRLF;
 			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + channel.getName() + " :End of /NAMES list" + CRLF;
-			channel.sendChannel(broadcast, client, false);
+			channel.sendChannel(broadcast, client, _clients, false);
 			send(client.getSocket(), res2.c_str(), res2.length(), 0);
 			send(client.getSocket(), res3.c_str(), res3.length(), 0);
 		}

@@ -17,7 +17,7 @@ void Server::handlePART(Client &client, Message message) {
 	}
 
 	std::string res = ":" + client.getSource() + " PART " + channel.getName() + " :" + client.getNickname() + CRLF;
-	channel.sendChannel(res, client, false);
+	channel.sendChannel(res, client, _clients, false);
 	channel.removeClient(client.getNickname());
 
 	if (channel.getNbClients() == 0) {

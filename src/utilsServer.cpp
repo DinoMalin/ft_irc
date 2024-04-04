@@ -27,7 +27,7 @@ Channel& Server::getChannel(std::string name) {
 }
 
 Client& Server::getClient(std::string nickname) {
-	for (int i = 0; i < MAX_CLIENTS; ++i) {
+	for (size_t i = 0; i < _clients.size(); ++i) {
 		if (_clients[i].getNickname() == nickname)
 			return _clients[i];
 	}
@@ -35,7 +35,7 @@ Client& Server::getClient(std::string nickname) {
 }
 
 bool Server::clientExist(std::string nickname) {
-	for (int i = 0; i < _numClients; i++) {
+	for (size_t i = 0; i < _clients.size(); i++) {
 		if (_clients[i].getNickname() == nickname)
 			return true;
 	}
@@ -64,7 +64,7 @@ void Server::disconnectClient(int index) {
 
 	for (size_t i = 0; i < _channels.size(); i++) {
         std::string res = ":" + client.getSource() + " QUIT " + _channels[i]->getName() + " :" + client.getNickname() + CRLF;
-	    _channels[i]->sendChannel(res, client, false);
+	    _channels[i]->sendChannel(res, client, _clients, true);
 		_channels[i]->removeClient(client.getNickname());
 
         if (_channels[i]->getNbClients() == 0) {
@@ -76,14 +76,11 @@ void Server::disconnectClient(int index) {
 	}
 
 	close(_fds[index].fd);
-	for (int i = index; i < _numClients - 1; ++i) {
+	for (size_t i = index; i < _clients.size(); ++i) {
 		_fds[i] = _fds[i + 1];
-		_clients[i - 1] = _clients[i];
 	}
+    _clients.erase(_clients.begin() + index - 1);
 
-    for (size_t i = 0; i < _channels.size(); i++) {
-        _channels[i]->rearrangeUsers(&_clients[i - 1]);
-    }
 	--_numClients;
 }
 

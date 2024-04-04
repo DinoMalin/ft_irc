@@ -11,7 +11,7 @@ class Server {
         socklen_t _clientAddrSize;
         int _socket;
         std::string _password;
-        Client _clients[MAX_CLIENTS];
+        std::vector<Client> _clients;
         std::vector<Channel*> _allChannels;
 	    struct sockaddr_in _serverAddr;
         struct sockaddr_in _clientAddr;

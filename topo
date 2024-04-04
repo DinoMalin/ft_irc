@@ -1,5 +1,3 @@
-A REGLER:
-- Bizarre qd je quitte NC alors que je suis dans un channel : Ne retire pas le user du channel
-- Pouvoir envoyer les msg de debut ds n'importe quel ordre, sauf PASS
-- Plus de msg d'accueil : RPL_ISUPPORT (005)
-- gerer taille max nick
+Pb :
+Quand user1 se connecte puis join, user2 se connecte puis join => invalid read
+Quand user1 se connecte, user2 se connecte, user1 join, user2 join => pas de pb

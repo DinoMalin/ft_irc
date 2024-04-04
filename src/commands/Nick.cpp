@@ -36,6 +36,10 @@ void Server::handleNICK(Client &client, Message message) {
 		std::string res = ":" + client.getSource() + " NICK " + newNick + CRLF;
 		send(client.getSocket(), res.c_str(), res.length(), 0);
 	}
+	for (size_t i = 0; i < _channels.size(); i++) {
+		if (_channels[i]->isInChannel(client.getNickname()))
+			_channels[i]->renameClient(client.getNickname(), newNick);
+	}
 	client.setNickname(newNick);
 	client.setNicked();
 }

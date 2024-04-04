@@ -24,7 +24,7 @@ void Server::handleKICK(Client &client, Message message) {
 	Client &ClientTarget = getClient(message.parameters[1]);
 
 	std::string res = ":" + client.getSource() + " KICK " + channel.getName() + " " + ClientTarget.getNickname() + " :" + message.remainder + CRLF;
-	channel.sendChannel(res, client, false);
+	channel.sendChannel(res, client, _clients, false);
 
 	channel.removeClient(ClientTarget.getNickname());
 	channel.removeRegistered(ClientTarget.getNickname());

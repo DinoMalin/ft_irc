@@ -78,7 +78,7 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 	if (flag[int('o')]) {
 		if (operation == '+')
-			channel.addOperator(&getClient(message.parameters[1 + flag[int('o')]]));
+			channel.addOperator(getClient(message.parameters[1 + flag[int('o')]]).getNickname());
 		else
 			channel.removeOperator(getClient(message.parameters[1 + flag[int('o')]]).getNickname());
 	}
@@ -90,5 +90,5 @@ void Server::handleMODE(Client &client, Message message) {
 	}
 
 	std::string res = ":" + client.getSource() + " MODE " + channel.getName() + " " + message.parameters[1] + CRLF;
-	channel.sendChannel(res, client, false);
+	channel.sendChannel(res, client, _clients, false);
 }
