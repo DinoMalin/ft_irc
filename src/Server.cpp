@@ -1,11 +1,15 @@
 #include "Server.hpp"
 
-Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password), _numClients(1), _buffer("") {
+Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password) {
 	initFuncs();
 
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	_fds[0].fd = _socket;
-	_fds[0].events = POLLIN;
+
+	struct pollfd serverFd;
+	serverFd.fd = _socket;
+	serverFd.events = POLLIN;
+	_fds.push_back(serverFd);
+
 	if (_socket < 0) {
 		std::cout << "Error in socket creation" << std::endl;
 		exit(EXIT_FAILURE);
@@ -39,14 +43,14 @@ Server::~Server() {disconnectEveryone();}
 
 void Server::run() {
 	while (true) {
-		if (poll(_fds, _numClients, -1) == -1) {
+		if (poll(&_fds[0], _fds.size(), -1) == -1) {
 			std::cout << "Error in poll" << std::endl;
 			close(_socket);
 			disconnectEveryone();
 			exit(EXIT_FAILURE);
 		}
 
-		for (int i = 0; i < _numClients; ++i) {
+		for (size_t i = 0; i < _fds.size(); ++i) {
 			if (_fds[i].revents & POLLIN) {
 				if (i == 0)
 					treatNewConnexion();
@@ -65,10 +69,12 @@ void Server::treatNewConnexion() {
 	} else {
 		std::cout << "New connection accepted" << std::endl;
 		_clients[_clients.size() - 1].setIp(inet_ntoa(_clientAddr.sin_addr));
-		_fds[_numClients].fd = _clients[_clients.size() - 1].getSocket();
-		_fds[_numClients].events = POLLIN;
-		_fds[_numClients].revents = 0;
-		++_numClients;
+
+		struct pollfd newFd;
+		newFd.fd = _clients[_clients.size() - 1].getSocket();
+		newFd.events = POLLIN;
+		newFd.revents = 0;
+		_fds.push_back(newFd);
 	}
 }
 

@@ -76,16 +76,12 @@ void Server::disconnectClient(int index) {
 	}
 
 	close(_fds[index].fd);
-	for (size_t i = index; i < _clients.size(); ++i) {
-		_fds[i] = _fds[i + 1];
-	}
+	_fds.erase(_fds.begin() + index);
     _clients.erase(_clients.begin() + index - 1);
-
-	--_numClients;
 }
 
 void Server::disconnectEveryone() {
-	for (int i = 0; i < _numClients; i++) {
+	for (size_t i = 0; i < _fds.size(); i++) {
 		disconnectClient(i);
 	}
 	for (size_t i = 0; i != _allChannels.size(); i++) {

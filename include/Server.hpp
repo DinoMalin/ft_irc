@@ -7,21 +7,20 @@ class Client;
 
 class Server {
     private:
-        typedef void (Server::*Funcs) (Client &, Message);
-        socklen_t _clientAddrSize;
         int _socket;
-        std::string _password;
-        std::vector<Client> _clients;
-        std::vector<Channel*> _allChannels;
 	    struct sockaddr_in _serverAddr;
         struct sockaddr_in _clientAddr;
+        socklen_t _clientAddrSize;
 
-        std::map<std::string, Funcs> _stringToFunc;
+        std::string _password;
 
-	    struct pollfd _fds[MAX_CLIENTS + 1];
-	    int _numClients;
+	    std::vector<struct pollfd> _fds;
+        std::vector<Client> _clients;
         std::vector<Channel*> _channels;
-        std::string _buffer;
+        std::vector<Channel*> _allChannels;
+        
+        typedef void (Server::*Funcs) (Client &, Message);
+        std::map<std::string, Funcs> _stringToFunc;
 
         void treatNewConnexion();
         void receiveMessage(int index);
