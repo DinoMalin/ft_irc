@@ -25,7 +25,6 @@ class Server {
         void receiveMessage(int index);
         bool commandsIsImplemented(std::string str);
         void disconnectClient(int index);
-        void disconnectEveryone();
 
         // ===== Command Handlers ===== //
 
@@ -61,6 +60,8 @@ class Server {
         void sendWelcome(Client &client);
     public:
         ~Server();
-        Server(int port, std::string password);
+        Server();
+        void init(int port, std::string password);
         void run();
+        void kill();
 };

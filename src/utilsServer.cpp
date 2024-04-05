@@ -67,9 +67,16 @@ void Server::disconnectClient(int index) {
     _clients.erase(_clients.begin() + index - 1);
 }
 
-void Server::disconnectEveryone() {
+void Server::kill() {
 	for (size_t i = 0; i < _fds.size(); i++) {
-		disconnectClient(i);
+		close(_fds[i].fd);
+		_fds.pop_back();
+	}
+	for (size_t i = 0; i < _clients.size(); i++) {
+		_clients.pop_back();
+	}
+	for (size_t i = 0; i < _channels.size(); i++) {
+		_channels.pop_back();
 	}
 }
 

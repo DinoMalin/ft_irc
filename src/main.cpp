@@ -1,6 +1,14 @@
 #include "header.hpp"
 #include "Server.hpp"
 
+Server server;
+
+void sigInt(int code) {
+    if (code == SIGINT)
+        server.kill();
+    exit(SIGINT);
+}
+
 int main(int ac, char **av) {
     if (ac != 3) {
         std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
@@ -14,7 +22,9 @@ int main(int ac, char **av) {
         }
     }
 
-	Server server(std::atoi(av[1]), av[2]);
+    signal(SIGINT, &sigInt);
+
+	server.init(std::atoi(av[1]), av[2]);
     server.run();
 
 	return 0;

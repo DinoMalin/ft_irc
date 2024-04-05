@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <signal.h>
 
 #define MAX_CLIENTS 200
 #define BUFFER_SIZE 513

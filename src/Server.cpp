@@ -1,8 +1,10 @@
 #include "Server.hpp"
 
-Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientAddr)), _password(password) {
-	initFuncs();
+	
+Server::Server() : _clientAddrSize(sizeof(_clientAddr)) {initFuncs();}
 
+void Server::init(int port, std::string password) {
+	_password = password;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	struct pollfd serverFd;
@@ -39,14 +41,14 @@ Server::Server(int port, std::string password) : _clientAddrSize(sizeof(_clientA
 	}
 }
 
-Server::~Server() {disconnectEveryone();}
+Server::~Server() {}
 
 void Server::run() {
 	while (true) {
 		if (poll(&_fds[0], _fds.size(), -1) == -1) {
 			std::cout << "Error in poll" << std::endl;
 			close(_socket);
-			disconnectEveryone();
+			kill();
 			exit(EXIT_FAILURE);
 		}
 
