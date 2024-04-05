@@ -16,7 +16,10 @@ void Channel::setInviteOnly(bool inv) {_inviteOnly = inv;}
 void Channel::setName(std::string name) {_name = name;}
 void Channel::setTopic(std::string topic) {_topic = topic;}
 void Channel::setPassword(std::string password) {_password = password;}
-void Channel::addClient(std::string nickname) {_clients.push_back(nickname);}
+void Channel::addClient(std::string nickname) {
+    if (!isInChannel(nickname))
+        _clients.push_back(nickname);
+}
 void Channel::setLimitUsers(int limitUsers) {_limited = true; _limitUsers = limitUsers;}
 void Channel::setLimited(bool limited) {_limited = limited;}
 
@@ -46,7 +49,8 @@ void Channel::removeClient(std::string nickname) {
 }
 
 void Channel::addRegistered(std::string nickname) {
-    _registered.push_back(nickname);
+    if (!isRegistered(nickname))
+        _registered.push_back(nickname);
 }
 
 void Channel::removeRegistered(std::string nickname) {
@@ -81,7 +85,8 @@ bool Channel::isInChannel(std::string nickname) {
     return false;
 }
 void Channel::addOperator(std::string nickname) {
-    _operators.push_back(nickname);
+    if (!isOperator(nickname))
+        _operators.push_back(nickname);
 }
 
 void Channel::removeOperator(std::string nickname) {
