@@ -14,16 +14,16 @@ std::string Client::getNickname() const {return _nickname;}
 std::string Client::getHostname() const {return _hostname;}
 std::string Client::getIp() const {return _ip;}
 
+bool Client::getNicked() {return _nicked;}
+bool Client::getUsered() {return _usered;}
+bool Client::getWelcomeSent() {return _welcomeSent;}
+
 void Client::setUsername(std::string username) {_username = username;}
 void Client::setNickname(std::string nickname) {_nickname = nickname;}
 void Client::setRegistered() {_registered = true;}
 void Client::setHostname(std::string hostname) {_hostname = hostname;}
 void Client::quitting() {_quitting = true;}
 void Client::setIp(std::string ip) {_ip = ip;}
-
-bool Client::getNicked() {return _nicked;}
-bool Client::getUsered() {return _usered;}
-bool Client::getWelcomeSent() {return _welcomeSent;}
 
 void Client::setNicked() {_nicked = true;}
 void Client::setUsered() {_usered = true;}

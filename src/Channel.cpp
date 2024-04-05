@@ -9,6 +9,7 @@ std::string Channel::getPassword() const {return _password;}
 
 bool Channel::isInviteOnly() {return _inviteOnly;}
 bool Channel::isLimited() const {return _limited;}
+bool Channel::getCanUseTopic() const {return _canUseTopic;}
 int Channel::getLimitUsers() const {return _limitUsers;}
 int Channel::getNbClients() const {return _clients.size();}
 
@@ -16,12 +17,9 @@ void Channel::setInviteOnly(bool inv) {_inviteOnly = inv;}
 void Channel::setName(std::string name) {_name = name;}
 void Channel::setTopic(std::string topic) {_topic = topic;}
 void Channel::setPassword(std::string password) {_password = password;}
-void Channel::addClient(std::string nickname) {
-    if (!isInChannel(nickname))
-        _clients.push_back(nickname);
-}
 void Channel::setLimitUsers(int limitUsers) {_limited = true; _limitUsers = limitUsers;}
 void Channel::setLimited(bool limited) {_limited = limited;}
+void Channel::setCanUseTopic(bool canUseTopic) {_canUseTopic = canUseTopic;}
 
 std::string Channel::getUserList() {
     std::string result("");
@@ -37,6 +35,10 @@ std::string Channel::getUserList() {
     return result;
 }
 
+void Channel::addClient(std::string nickname) {
+    if (!isInChannel(nickname))
+        _clients.push_back(nickname);
+}
 void Channel::removeClient(std::string nickname) {
     for (size_t i = 0; i < _clients.size(); i++) {
         if (_clients[i] == nickname) {
@@ -47,12 +49,18 @@ void Channel::removeClient(std::string nickname) {
         }
     }
 }
+bool Channel::isInChannel(std::string nickname) {
+    for (size_t i = 0; i < _clients.size(); i++) {
+        if (_clients[i] == nickname)
+            return true;
+    }
+    return false;
+}
 
 void Channel::addRegistered(std::string nickname) {
     if (!isRegistered(nickname))
         _registered.push_back(nickname);
 }
-
 void Channel::removeRegistered(std::string nickname) {
     for (size_t i = 0; i < _registered.size(); ++i) {
         if (_registered[i] == nickname) {
@@ -61,14 +69,12 @@ void Channel::removeRegistered(std::string nickname) {
         }
     }
 }
-
 void Channel::clearRegistered() {
     for (size_t i = 0; i < _registered.size(); ++i) {
         _registered.erase(_registered.begin() + i);
         return;
     }
 }
-
 bool Channel::isRegistered(std::string nickname) {
     for (size_t i = 0; i < _registered.size(); ++i) {
         if (_registered[i] == nickname)
@@ -77,13 +83,6 @@ bool Channel::isRegistered(std::string nickname) {
     return false;
 }
 
-bool Channel::isInChannel(std::string nickname) {
-    for (size_t i = 0; i < _clients.size(); i++) {
-        if (_clients[i] == nickname)
-            return true;
-    }
-    return false;
-}
 void Channel::addOperator(std::string nickname) {
     if (!isOperator(nickname))
         _operators.push_back(nickname);
@@ -97,7 +96,6 @@ void Channel::removeOperator(std::string nickname) {
         }
     }
 }
-
 bool Channel::isOperator(std::string nickname) {
     for (size_t i = 0; i < _operators.size(); ++i) {
         if (_operators[i] == nickname)
@@ -106,6 +104,7 @@ bool Channel::isOperator(std::string nickname) {
     return false;
 }
 
+
 void Channel::sendChannel(std::string message, Client author, std::vector<Client> clients, bool skipAuthor) {
     for (size_t i = 0; i < clients.size(); i++) {
         if (isInChannel(clients[i].getNickname())) {
@@ -113,14 +112,6 @@ void Channel::sendChannel(std::string message, Client author, std::vector<Client
                 send(clients[i].getSocket(), message.c_str(), message.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
         }
     }
-}
-
-bool Channel::getCanUseTopic() const {
-    return _canUseTopic;
-}
-
-void Channel::setCanUseTopic(bool canUseTopic) {
-    _canUseTopic = canUseTopic;
 }
 
 void Channel::renameClient(std::string oldNick, std::string newNick) {

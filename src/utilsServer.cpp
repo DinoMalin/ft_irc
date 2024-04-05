@@ -97,8 +97,8 @@ void Server::sendWelcome(Client &client) {
 	std::string res1 = ":" + std::string(ADDRESS) + " 001 " + client.getNickname() + " :Welcome to the Internet Relay Network, " + client.getSource() + CRLF;
 	std::string res2 = ":" + std::string(ADDRESS) + " 002 " + client.getNickname() + " :Your host is " + client.getSource() + ", running version 0.29.22" + CRLF;
 	std::string res3 = ":" + std::string(ADDRESS) + " 003 " + client.getNickname() + " :This server was created on 20th January 2004" + CRLF;
-	std::string res4 = ":" + std::string(ADDRESS) + " 004 " + client.getNickname() + " IrcServer 0.29.22  itkol " + CRLF;
-	std::string res5 = ":" + std::string(ADDRESS) + " 005 " + client.getNickname() + " NICKLEN=10 :are supported by this server " + CRLF;
+	std::string res4 = ":" + std::string(ADDRESS) + " 004 " + client.getNickname() + " IrcServer 0.29.22  itkol" + CRLF;
+	std::string res5 = ":" + std::string(ADDRESS) + " 005 " + client.getNickname() + " NICKLEN=10 :are supported by this server" + CRLF;
 	
 	send(client.getSocket(), res1.c_str(), res1.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 	send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
