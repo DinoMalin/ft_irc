@@ -37,8 +37,8 @@ void Server::handleNICK(Client &client, Message message) {
 		send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 	}
 	for (size_t i = 0; i < _channels.size(); i++) {
-		if (_channels[i]->isInChannel(client.getNickname()))
-			_channels[i]->renameClient(client.getNickname(), newNick);
+		if (_channels[i].isInChannel(client.getNickname()))
+			_channels[i].renameClient(client.getNickname(), newNick);
 	}
 	client.setNickname(newNick);
 	client.setNicked();

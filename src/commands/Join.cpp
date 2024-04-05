@@ -40,20 +40,19 @@ void Server::handleJOIN(Client &client, Message message) {
 	for (size_t i = 0; i < channelNames.size(); i++) {
 		if (!channelExist(channelNames[i])) {
 
-			Channel *newChannel = new Channel(channelNames[i]);
+			Channel newChannel(channelNames[i]);
 
-			newChannel->addClient(client.getNickname());
-			newChannel->addOperator(client.getNickname());
-			newChannel->addRegistered(client.getNickname());
+			newChannel.addClient(client.getNickname());
+			newChannel.addOperator(client.getNickname());
+			newChannel.addRegistered(client.getNickname());
 
 			_channels.push_back(newChannel);
-			_allChannels.push_back(newChannel);
 
-			std::string broadcast = ":" + client.getSource() + " JOIN :" + newChannel->getName() + CRLF;
-			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
-			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
+			std::string broadcast = ":" + client.getSource() + " JOIN :" + newChannel.getName() + CRLF;
+			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel.getName() + " :" + newChannel.getUserList() + CRLF;
+			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel.getName() + " :End of /NAMES list" + CRLF;
 
-			newChannel->sendChannel(broadcast, client, _clients, false);
+			newChannel.sendChannel(broadcast, client, _clients, false);
 			send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 			send(client.getSocket(), res3.c_str(), res3.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 		}
@@ -62,7 +61,7 @@ void Server::handleJOIN(Client &client, Message message) {
 			std::string key;
 			if (keys.size())
 				key = keys[i];
-			
+
 			if (channel.getPassword().length() && !keys.size() && !channel.isRegistered(client.getNickname())) {
 				sendError(475, client, message, channelNames[i]);
 				continue ;

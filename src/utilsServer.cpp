@@ -5,10 +5,10 @@ Channel& Server::getChannel(std::string name) {
 	if (name[0] != '#')
 		name = '#' + name;
 	for (size_t i = 0; i != _channels.size(); i++) {
-		if (_channels[i]->getName() == name)
-			return *_channels[i];
+		if (_channels[i].getName() == name)
+			return _channels[i];
 	}
-	return *_channels[0];
+	return _channels[0];
 }
 
 Client& Server::getClient(std::string nickname) {
@@ -31,7 +31,7 @@ bool Server::channelExist(std::string channel) {
 	if (channel[0] != '#')
 		channel = '#' + channel;
 	for (size_t i = 0; i < _channels.size(); i++) {
-		if (_channels[i]->getName() == channel)
+		if (_channels[i].getName() == channel)
 			return true;
 	}
 	return false;
@@ -50,13 +50,13 @@ void Server::disconnectClient(int index) {
     Client &client = _clients[index - 1];
 
 	for (size_t i = 0; i < _channels.size(); i++) {
-        std::string res = ":" + client.getSource() + " QUIT " + _channels[i]->getName() + " :" + client.getNickname() + CRLF;
-	    _channels[i]->sendChannel(res, client, _clients, true);
-		_channels[i]->removeClient(client.getNickname());
+        std::string res = ":" + client.getSource() + " QUIT " + _channels[i].getName() + " :" + client.getNickname() + CRLF;
+	    _channels[i].sendChannel(res, client, _clients, true);
+		_channels[i].removeClient(client.getNickname());
 
-        if (_channels[i]->getNbClients() == 0) {
+        if (_channels[i].getNbClients() == 0) {
             for (size_t j = 0; j < _channels.size(); j++) {
-                if (_channels[j]->getName() == _channels[j]->getName())
+                if (_channels[j].getName() == _channels[j].getName())
                     _channels.erase(_channels.begin() + j);
             }
 		}
@@ -70,9 +70,6 @@ void Server::disconnectClient(int index) {
 void Server::disconnectEveryone() {
 	for (size_t i = 0; i < _fds.size(); i++) {
 		disconnectClient(i);
-	}
-	for (size_t i = 0; i != _allChannels.size(); i++) {
-		delete _channels[i];
 	}
 }
 

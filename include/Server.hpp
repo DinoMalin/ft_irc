@@ -16,8 +16,7 @@ class Server {
 
 	    std::vector<struct pollfd> _fds;
         std::vector<Client> _clients;
-        std::vector<Channel*> _channels;
-        std::vector<Channel*> _allChannels;
+        std::vector<Channel> _channels;
         
         typedef void (Server::*Funcs) (Client &, Message);
         std::map<std::string, Funcs> _stringToFunc;
