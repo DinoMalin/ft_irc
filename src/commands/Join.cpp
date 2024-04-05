@@ -1,5 +1,20 @@
 #include "Server.hpp"
 
+static bool authorizedChar(std::string str) {
+	for (size_t i = 0; i < str.length(); i++) {
+		if (!((str[i] >= 'a' && str[i] <= 'z')
+			|| (str[i] >= '0' && str[i] <= '9')
+			|| (str[i] >= 'A' && str[i] <= 'Z')
+			|| str[i] == '[' || str[i] == ']'
+			|| str[i] == '{' || str[i] == '}'
+			|| str[i] == '[' || str[i] == ']'
+			|| str[i] == '\\' || str[i] == '|'
+			|| str[i] == '_') || str[i] == '#')
+			return false;
+	}
+	return true;
+}
+
 void Server::handleJOIN(Client &client, Message message) {
 	if (message.parameters.size() < 1) {
 		sendError(461, client, message, "");
@@ -17,18 +32,30 @@ void Server::handleJOIN(Client &client, Message message) {
 	}
 
 	for (size_t i = 0; i < channelNames.size(); i++) {
+		if (!channelNames[i].length() || !authorizedChar(channelNames[i])) {
+			sendError(476, client, message, channelNames[i]);
+			return ;
+		}
+	}
+
+	for (size_t i = 0; i < channelNames.size(); i++) {
 		if (channelNames[i][0] != '#')
 			channelNames[i] = '#' + channelNames[i];
 		if (!channelExist(channelNames[i])) {
+
 			Channel *newChannel = new Channel(channelNames[i]);
+
 			newChannel->addClient(client.getNickname());
 			newChannel->addOperator(client.getNickname());
 			newChannel->addRegistered(client.getNickname());
+
 			_channels.push_back(newChannel);
 			_allChannels.push_back(newChannel);
+
 			std::string broadcast = ":" + client.getSource() + " JOIN :" + newChannel->getName() + CRLF;
 			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
 			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
+
 			newChannel->sendChannel(broadcast, client, _clients, false);
 			send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 			send(client.getSocket(), res3.c_str(), res3.length(), MSG_DONTWAIT | MSG_NOSIGNAL);

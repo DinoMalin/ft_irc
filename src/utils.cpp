@@ -88,6 +88,8 @@ void sendError(int code, Client client, Message message, std::string opt) {
 		res = ":" + std::string(ADDRESS) + " 473 " + client.getNickname() + " " + opt + " :Cannot join channel (+i)" + CRLF;
 	else if (code == 475)
 		res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)" + CRLF;
+	else if (code == 476)
+		res = ":" + std::string(ADDRESS) + " 476 " + client.getNickname() + " " + opt + " :Bad Channel Mask" + CRLF;
 	else if (code == 482)
 		res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator" + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
