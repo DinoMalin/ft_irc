@@ -3,7 +3,7 @@
 
 void send_message(int sockfd, const std::string& channel, const std::string& message) {
     std::string full_message = "PRIVMSG " + channel + " :" + message + CRLF;
-    send(sockfd, full_message.c_str(), full_message.size(), 0);
+    send(sockfd, full_message.c_str(), full_message.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }
 
 bool endsWiths(std::string const &fullString, std::string const &ending) {
@@ -67,10 +67,10 @@ int main(int argc, char** argv) {
     std::string user_message = "USER feurbot Feurbot localhost :FeurBot" + std::string(CRLF);
     std::string join_message = "JOIN " + channel + CRLF;
     std::string nick_message = "NICK feurbot" + std::string(CRLF);
-    send(sockfd, pass_message.c_str(), pass_message.size(), 0);
-    send(sockfd, nick_message.c_str(), nick_message.size(), 0);
-    send(sockfd, user_message.c_str(), user_message.size(), 0);
-    send(sockfd, join_message.c_str(), join_message.size(), 0);
+    send(sockfd, pass_message.c_str(), pass_message.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    send(sockfd, nick_message.c_str(), nick_message.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    send(sockfd, user_message.c_str(), user_message.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    send(sockfd, join_message.c_str(), join_message.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
 
     char buffer[4096];
     ssize_t bytes_received;

@@ -100,9 +100,9 @@ void Server::sendWelcome(Client &client) {
 	std::string res4 = ":" + std::string(ADDRESS) + " 004 " + client.getNickname() + " IrcServer 0.29.22  itkol " + CRLF;
 	std::string res5 = ":" + std::string(ADDRESS) + " 005 " + client.getNickname() + " NICKLEN=10 :are supported by this server " + CRLF;
 	
-	send(client.getSocket(), res1.c_str(), res1.length(), 0);
-	send(client.getSocket(), res2.c_str(), res2.length(), 0);
-	send(client.getSocket(), res3.c_str(), res3.length(), 0);
-	send(client.getSocket(), res4.c_str(), res4.length(), 0);
-	send(client.getSocket(), res5.c_str(), res5.length(), 0);
+	send(client.getSocket(), res1.c_str(), res1.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	send(client.getSocket(), res3.c_str(), res3.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	send(client.getSocket(), res4.c_str(), res4.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	send(client.getSocket(), res5.c_str(), res5.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }

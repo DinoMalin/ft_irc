@@ -105,7 +105,7 @@ void Channel::sendChannel(std::string message, Client author, std::vector<Client
     for (size_t i = 0; i < clients.size(); i++) {
         if (isInChannel(clients[i].getNickname())) {
             if (!(skipAuthor && author.getNickname() == clients[i].getNickname()))
-                send(clients[i].getSocket(), message.c_str(), message.length(), 0);
+                send(clients[i].getSocket(), message.c_str(), message.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
         }
     }
 }

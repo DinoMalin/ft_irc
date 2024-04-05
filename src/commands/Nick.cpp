@@ -34,7 +34,7 @@ void Server::handleNICK(Client &client, Message message) {
 	}
 	if (client.getUsername().length()) {
 		std::string res = ":" + client.getSource() + " NICK " + newNick + CRLF;
-		send(client.getSocket(), res.c_str(), res.length(), 0);
+		send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 	}
 	for (size_t i = 0; i < _channels.size(); i++) {
 		if (_channels[i]->isInChannel(client.getNickname()))

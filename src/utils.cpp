@@ -90,7 +90,7 @@ void sendError(int code, Client client, Message message, std::string opt) {
 		res = ":" + std::string(ADDRESS) + " 475 " + client.getNickname() + " " + opt + " :Cannot join channel (+k)" + CRLF;
 	else if (code == 482)
 		res = ":" + std::string(ADDRESS) + " 482 " + client.getNickname() + " " + opt + " :You're not channel operator" + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
+	send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }
 
 std::string toString(int nb) {

@@ -6,5 +6,5 @@ void Server::handlePING(Client &client, Message message) {
 		return ;
 	}
 	std::string res = ":" + std::string(ADDRESS) + " PONG " + std::string(ADDRESS) + " :" + message.parameters[0] + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
+	send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }

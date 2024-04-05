@@ -22,8 +22,8 @@ void Server::handleJOIN(Client &client, Message message) {
 			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + newChannel->getName() + " :" + newChannel->getUserList() + CRLF;
 			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + newChannel->getName() + " :End of /NAMES list" + CRLF;
 			newChannel->sendChannel(broadcast, client, _clients, false);
-			send(client.getSocket(), res2.c_str(), res2.length(), 0);
-			send(client.getSocket(), res3.c_str(), res3.length(), 0);
+			send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+			send(client.getSocket(), res3.c_str(), res3.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 		}
 		else {
 			Channel &channel = getChannel(channelNames[i]);
@@ -49,8 +49,8 @@ void Server::handleJOIN(Client &client, Message message) {
 			std::string res2 = ":" + std::string(ADDRESS) + " 353 " + client.getNickname() + " = " + channel.getName() + " :" + channel.getUserList() + CRLF;
 			std::string res3 = ":" + std::string(ADDRESS) + " 366 " + client.getNickname() + " " + channel.getName() + " :End of /NAMES list" + CRLF;
 			channel.sendChannel(broadcast, client, _clients, false);
-			send(client.getSocket(), res2.c_str(), res2.length(), 0);
-			send(client.getSocket(), res3.c_str(), res3.length(), 0);
+			send(client.getSocket(), res2.c_str(), res2.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+			send(client.getSocket(), res3.c_str(), res3.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 		}
 	}
 }

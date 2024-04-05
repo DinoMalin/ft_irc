@@ -33,6 +33,6 @@ void Server::handleINVITE(Client &client, Message message) {
 	channel.addRegistered(invited.getNickname());
 	std::string res = ":" + invited.getSource() + " 341 " + client.getNickname() + " " + invited.getNickname() + " " +  channel.getName() + CRLF;
 	std::string invite = ":" + client.getSource() + " INVITE " + invited.getNickname() + " " + channel.getName() + CRLF;
-	send(client.getSocket(), res.c_str(), res.length(), 0);
-	send(invited.getSocket(), invite.c_str(), invite.length(), 0);
+	send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+	send(invited.getSocket(), invite.c_str(), invite.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }

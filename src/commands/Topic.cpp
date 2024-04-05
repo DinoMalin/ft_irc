@@ -30,11 +30,11 @@ void Server::handleTOPIC(Client &client, Message message) {
 		if (channel.getTopic() != "") {
 			std::string res = ":" + std::string(ADDRESS) + " 332 " + client.getNickname() + " " + channel.getName() + " :"
 				+ channel.getTopic() + CRLF;
-			send(client.getSocket(), res.c_str(), res.length(), 0);
+			send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 		} else {
 			std::string res = ":" + std::string(ADDRESS) + " 331 " + client.getNickname() + " " + channel.getName()
 				+ " :No topic is set" + CRLF;
-			send(client.getSocket(), res.c_str(), res.length(), 0);
+			send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 		}
 	}
 }
