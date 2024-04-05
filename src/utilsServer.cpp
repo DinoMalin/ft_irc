@@ -1,24 +1,9 @@
 
 #include "Server.hpp"
 
-void Server::initFuncs() {
-	_stringToFunc["CAP"] = &Server::handleCAP;
-	_stringToFunc["PING"] = &Server::handlePING;
-	_stringToFunc["PASS"] = &Server::handlePASS;
-	_stringToFunc["NICK"] = &Server::handleNICK;
-	_stringToFunc["USER"] = &Server::handleUSER;
-	_stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
-	_stringToFunc["JOIN"] = &Server::handleJOIN;
-	_stringToFunc["PART"] = &Server::handlePART;
-	_stringToFunc["LIST"] = &Server::handleLIST;
-	_stringToFunc["KICK"] = &Server::handleKICK;
-	_stringToFunc["INVITE"] = &Server::handleINVITE;
-	_stringToFunc["TOPIC"] = &Server::handleTOPIC;
-	_stringToFunc["MODE"] = &Server::handleMODE;
-	_stringToFunc["QUIT"] = &Server::handleQUIT;
-}
-
 Channel& Server::getChannel(std::string name) {
+	if (name[0] != '#')
+		name = '#' + name;
 	for (size_t i = 0; i != _channels.size(); i++) {
 		if (_channels[i]->getName() == name)
 			return *_channels[i];
@@ -43,6 +28,8 @@ bool Server::clientExist(std::string nickname) {
 }
 
 bool Server::channelExist(std::string channel) {
+	if (channel[0] != '#')
+		channel = '#' + channel;
 	for (size_t i = 0; i < _channels.size(); i++) {
 		if (_channels[i]->getName() == channel)
 			return true;
@@ -87,6 +74,23 @@ void Server::disconnectEveryone() {
 	for (size_t i = 0; i != _allChannels.size(); i++) {
 		delete _channels[i];
 	}
+}
+
+void Server::initFuncs() {
+	_stringToFunc["CAP"] = &Server::handleCAP;
+	_stringToFunc["PING"] = &Server::handlePING;
+	_stringToFunc["PASS"] = &Server::handlePASS;
+	_stringToFunc["NICK"] = &Server::handleNICK;
+	_stringToFunc["USER"] = &Server::handleUSER;
+	_stringToFunc["PRIVMSG"] = &Server::handlePRIVMSG;
+	_stringToFunc["JOIN"] = &Server::handleJOIN;
+	_stringToFunc["PART"] = &Server::handlePART;
+	_stringToFunc["LIST"] = &Server::handleLIST;
+	_stringToFunc["KICK"] = &Server::handleKICK;
+	_stringToFunc["INVITE"] = &Server::handleINVITE;
+	_stringToFunc["TOPIC"] = &Server::handleTOPIC;
+	_stringToFunc["MODE"] = &Server::handleMODE;
+	_stringToFunc["QUIT"] = &Server::handleQUIT;
 }
 
 void Server::sendWelcome(Client &client) {

@@ -13,11 +13,11 @@ void Server::handleKICK(Client &client, Message message) {
 	Channel &channel = getChannel(message.parameters[0]);
 	if (!channel.isInChannel(client.getNickname()) || !clientExist(message.parameters[1])
 		|| !channel.isInChannel(getClient(message.parameters[1]).getNickname())) {
-		sendError(442, client, message, message.parameters[0]);
+		sendError(442, client, message, channel.getName());
 		return ;
 	}
 	if (!channel.isOperator(client.getNickname())) {
-		sendError(482, client, message, message.parameters[0]);
+		sendError(482, client, message, channel.getName());
 		return ;
 	}
 
