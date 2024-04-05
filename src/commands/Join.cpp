@@ -2,14 +2,11 @@
 
 static bool authorizedChar(std::string str) {
 	for (size_t i = 0; i < str.length(); i++) {
+		if (i == 0 && str[i] == '#')
+			continue;
 		if (!((str[i] >= 'a' && str[i] <= 'z')
 			|| (str[i] >= '0' && str[i] <= '9')
-			|| (str[i] >= 'A' && str[i] <= 'Z')
-			|| str[i] == '[' || str[i] == ']'
-			|| str[i] == '{' || str[i] == '}'
-			|| str[i] == '[' || str[i] == ']'
-			|| str[i] == '\\' || str[i] == '|'
-			|| str[i] == '_') || str[i] == '#')
+			|| (str[i] >= 'A' && str[i] <= 'Z')))
 			return false;
 	}
 	return true;
@@ -32,15 +29,15 @@ void Server::handleJOIN(Client &client, Message message) {
 	}
 
 	for (size_t i = 0; i < channelNames.size(); i++) {
-		if (!channelNames[i].length() || !authorizedChar(channelNames[i])) {
+		if (channelNames[i][0] != '#')
+			channelNames[i] = '#' + channelNames[i];
+		if (channelNames[i].length() < 2 || !authorizedChar(channelNames[i])) {
 			sendError(476, client, message, channelNames[i]);
 			return ;
 		}
 	}
 
 	for (size_t i = 0; i < channelNames.size(); i++) {
-		if (channelNames[i][0] != '#')
-			channelNames[i] = '#' + channelNames[i];
 		if (!channelExist(channelNames[i])) {
 
 			Channel *newChannel = new Channel(channelNames[i]);
