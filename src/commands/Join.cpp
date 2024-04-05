@@ -41,7 +41,7 @@ void Server::handleJOIN(Client &client, Message message) {
 			
 			if (channel.getPassword().length() && !keys.size() && !channel.isRegistered(client.getNickname())) {
 				sendError(475, client, message, channelNames[i]);
-				continue ;	
+				continue ;
 			}
 			if (channel.getPassword().length() && channel.getPassword() != key && !channel.isRegistered(client.getNickname())) {
 				sendError(475, client, message, channelNames[i]);

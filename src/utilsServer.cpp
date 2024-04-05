@@ -19,9 +19,9 @@ void Server::initFuncs() {
 }
 
 Channel& Server::getChannel(std::string name) {
-	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		if ((*it)->getName() == name)
-			return *(*it);
+	for (size_t i = 0; i != _channels.size(); i++) {
+		if (_channels[i]->getName() == name)
+			return *_channels[i];
 	}
 	return *_channels[0];
 }
@@ -88,8 +88,8 @@ void Server::disconnectEveryone() {
 	for (int i = 0; i < _numClients; i++) {
 		disconnectClient(i);
 	}
-	for (std::vector<Channel *>::iterator it = _allChannels.begin(); it != _allChannels.end(); ++it) {
-		delete *it;
+	for (size_t i = 0; i != _allChannels.size(); i++) {
+		delete _channels[i];
 	}
 }
 

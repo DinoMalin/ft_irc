@@ -5,8 +5,8 @@ void Server::handleLIST(Client &client, Message message) {
 	std::string res = ":" + std::string(ADDRESS) + " 321 " + client.getNickname() + " Channel :Users  Topic" + CRLF;
 	send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 
-	for (std::vector<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " " + (*it)->getName() + " " + toString((*it)->getNbClients()) + " :" + (*it)->getTopic() + CRLF;
+	for (size_t i = 0; i < _channels.size(); i++) {
+		res =  ":" + std::string(ADDRESS) +  " 322 " + client.getNickname() + " " + _channels[i]->getName() + " " + toString(_channels[i]->getNbClients()) + " :" + _channels[i]->getTopic() + CRLF;
 		send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
 	}
 
