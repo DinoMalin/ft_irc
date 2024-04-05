@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
         return 1;
     }
     std::string pass_message = "PASS " + password + CRLF;
-    std::string user_message = "USER feurbot Feurbot localhost :FeurBot";
+    std::string user_message = "USER feurbot Feurbot localhost :FeurBot" + std::string(CRLF);
     std::string join_message = "JOIN " + channel + CRLF;
     std::string nick_message = "NICK feurbot" + std::string(CRLF);
     send(sockfd, pass_message.c_str(), pass_message.size(), 0);
