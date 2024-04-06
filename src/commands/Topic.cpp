@@ -17,13 +17,13 @@ void Server::handleTOPIC(Client &client, Message message) {
 	}
 
 	if (message.parameters.size() == 2) {
-		if (channel.isOperator(client.getNickname()) && channel.getCanUseTopic()) {
+		if (channel.isOperator(client.getNickname()) && channel.canUseTopic()) {
 			channel.setTopic(message.parameters[1]);
 			std::string res = ":" + client.getSource() + " TOPIC " + message.parameters[0] + " :"
 				+ message.parameters[1] + CRLF;
 			channel.sendChannel(res, client, _clients, false);
 		} else {
-			if (channel.getCanUseTopic())
+			if (channel.canUseTopic())
 				sendError(482, client, message, message.parameters[0]);
 		}
 	} else {

@@ -28,7 +28,7 @@ class Channel {
         std::string getUserList();
         int getNbClients() const;
         int getLimitUsers() const;
-        bool getCanUseTopic() const;
+        bool canUseTopic() const;
         bool isLimited() const;
         void setName(std::string name);
         void setTopic(std::string topic);
@@ -56,4 +56,6 @@ class Channel {
         bool isInviteOnly();
 
         void renameClient(std::string oldNick, std::string newNick);
+
+        std::string getModes();
 };

@@ -9,7 +9,7 @@ std::string Channel::getPassword() const {return _password;}
 
 bool Channel::isInviteOnly() {return _inviteOnly;}
 bool Channel::isLimited() const {return _limited;}
-bool Channel::getCanUseTopic() const {return _canUseTopic;}
+bool Channel::canUseTopic() const {return _canUseTopic;}
 int Channel::getLimitUsers() const {return _limitUsers;}
 int Channel::getNbClients() const {return _clients.size();}
 
@@ -127,4 +127,16 @@ void Channel::renameClient(std::string oldNick, std::string newNick) {
         if (_operators[i] == oldNick)
             _operators[i] = newNick;
     }
+}
+
+std::string Channel::getModes() {
+    std::string mode;
+
+    mode += _inviteOnly ? "+i" : "-i";
+    mode += _canUseTopic ? "+t" : "-t";
+    mode += _password.length() ? "+k" : "-k";
+    mode += _operators.size() ? "+o" : "-o";
+    mode += _limited ? "+l" : "-l";
+
+    return mode;
 }

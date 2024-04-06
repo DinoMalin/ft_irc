@@ -5,20 +5,28 @@ void Server::handleMODE(Client &client, Message message) {
 		sendError(461, client, message, "");
 		return ;
 	}
-	if ((channelExist(message.parameters[0]) && message.parameters.size() == 1)
-		|| clientExist(message.parameters[0]))
+	if (clientExist(message.parameters[0]))
 		return ;
 	if (!channelExist(message.parameters[0])) {
 		sendError(403, client, message, message.parameters[0]);
 		return ;
 	}
+
+	Channel &channel = getChannel(message.parameters[0]);
+	if (!channel.isInChannel(client.getNickname())) {
+		sendError(442, client, message, channel.getName());
+		return ;
+	}
+	if (message.parameters.size() == 1) {
+		std::string res = ":" + client.getSource() + " MODE " + channel.getName() + " " + channel.getModes() + CRLF;
+		send(client.getSocket(), res.c_str(), res.length(), MSG_DONTWAIT | MSG_NOSIGNAL);
+		return ;
+	}
+
 	if (message.parameters[1].length() < 2) {
 		sendError(472, client, message, std::string() + message.parameters[1][1]);
 		return ;
 	}
-
-
-	Channel &channel = getChannel(message.parameters[0]);
 	if (!channel.isInChannel(client.getNickname())) {
 		sendError(442, client, message, channel.getName());
 		return ;
