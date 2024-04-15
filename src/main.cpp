@@ -22,6 +22,15 @@ int main(int ac, char **av) {
         }
     }
 
+    if (std::atoi(av[1]) < 0 || std::atoi(av[1]) > 65535) {
+        std::cout << "Error: Port out of bound." << std::endl;
+        return 1;
+    }
+    if (!av[2][0]) {
+        std::cout << "Error: Undefined password." << std::endl;
+        return 1;
+    }
+
     signal(SIGINT, &sigInt);
 
 	server.init(std::atoi(av[1]), av[2]);
